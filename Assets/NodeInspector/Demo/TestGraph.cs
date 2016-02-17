@@ -8,5 +8,9 @@ namespace NodeInspector.Demo{
     public class TestGraph : ScriptableObject {
         [Graph("TestGraph")]
         public List<CustomNode> AllNodes;
+
+        [Graph]
+        public List<CustomNode> AnotherAllNodes;
+
     }    
 }

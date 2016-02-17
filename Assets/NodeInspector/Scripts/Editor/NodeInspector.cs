@@ -27,13 +27,14 @@ namespace NodeInspector.Editor{
         }
 
         Dictionary<string, GraphData> nodes;
+        int selectedGraph;
+
 
         bool CheckSelectedObject(){
             if (Selection.activeObject == null || !(Selection.activeObject is ScriptableObject)){
                 return false;
             }
             ScriptableObject so = Selection.activeObject as ScriptableObject;
-            Debug.Log(so.GetType());
             nodes = new Dictionary<string, GraphData>();
             foreach (FieldInfo fieldInfo in  so.GetType().GetFields()){
                 GraphData data;
@@ -50,14 +51,25 @@ namespace NodeInspector.Editor{
         }
 
 
+
+
         void OnGUIToolBar(){            
             GUILayout.BeginHorizontal(EditorStyles.toolbar, new GUILayoutOption[0]);
+
+            GUICreateMenuItems();
+            GUILayout.FlexibleSpace();
+            GUICreateGraphsItems();
+            GUILayout.EndHorizontal();
+        }
+
+        void GUICreateMenuItems(){
             if (GUILayout.Button("Create",EditorStyles.toolbarDropDown, new GUILayoutOption[0]))
-            {                
+            {          
+
                 GenericMenu toolsMenu = new GenericMenu();
 
                 toolsMenu.AddItem(new GUIContent("Menu1"), false, null);
-            
+
                 toolsMenu.AddDisabledItem(new GUIContent("Menu2"));
                 toolsMenu.AddSeparator("");
                 toolsMenu.AddItem(new GUIContent("Help..."), false, null);
@@ -67,10 +79,12 @@ namespace NodeInspector.Editor{
                 rect.y+= EditorStyles.toolbar.fixedHeight/2.0f;
                 toolsMenu.DropDown(rect);
             }
-            GUILayout.FlexibleSpace();
-            GUILayout.EndHorizontal();
         }
 
+
+        void GUICreateGraphsItems(){            
+            selectedGraph = EditorGUILayout.Popup(selectedGraph, nodes.Keys.ToArray(), EditorStyles.toolbarPopup);
+        }
 
 
         [MenuItem("Test/GUIWindow")]

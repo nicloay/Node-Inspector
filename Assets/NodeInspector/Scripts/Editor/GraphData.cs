@@ -17,14 +17,17 @@ namespace NodeInspector.Editor{
         }
 
         public static bool CanCreateGraphData(ScriptableObject parentObject, FieldInfo fieldInfo, out GraphData graphData){
-            Debug.Log(fieldInfo.Name);
             graphData = null;
             object value = fieldInfo.GetValue(parentObject);
             Type valueType = value.GetType();
             if (valueType.IsGenericType && (valueType.GetGenericTypeDefinition() == typeof(List<>))
                 && typeof(ScriptableObject).IsAssignableFrom( valueType.GetGenericArguments()[0])){
 
-                GraphAttribute attribute =  fieldInfo.GetCustomAttributes(false)
+                object[] attributes = fieldInfo.GetCustomAttributes(false);
+                if (attributes == null || attributes.Length == 0){
+                    return false;
+                }
+                GraphAttribute attribute =  attributes
                     .ToList().First((arg) => arg.GetType() == typeof(GraphAttribute)) as GraphAttribute;
                 if (attribute != null){
                     graphData = new GraphData();
