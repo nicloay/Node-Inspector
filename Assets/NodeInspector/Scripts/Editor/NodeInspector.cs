@@ -1,6 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEditor;
+using System.Reflection;
+using System.Linq;
+using NodeInspector;
+using System.Collections.Generic;
 
 namespace NodeInspector.Editor{    
     public class NodeInspector : EditorWindow {
@@ -10,6 +14,10 @@ namespace NodeInspector.Editor{
         NodeGUI soGUI = new NodeGUI(new ScriptableObject());
         NodeGUI soGUI2 = new NodeGUI(new ScriptableObject());
         void OnGUI(){
+            if (!CheckSelectedObject()){
+                return;
+            }
+
             OnGUIToolBar();
             BeginWindows();
 
@@ -17,7 +25,29 @@ namespace NodeInspector.Editor{
             soGUI2.OnGUI();
             EndWindows();
         }
-            
+
+        Dictionary<string, GraphData> nodes;
+
+        bool CheckSelectedObject(){
+            if (Selection.activeObject == null || !(Selection.activeObject is ScriptableObject)){
+                return false;
+            }
+            ScriptableObject so = Selection.activeObject as ScriptableObject;
+            Debug.Log(so.GetType());
+            nodes = new Dictionary<string, GraphData>();
+            foreach (FieldInfo fieldInfo in  so.GetType().GetFields()){
+                GraphData data;
+                if (GraphData.CanCreateGraphData(so, fieldInfo, out data)){
+                    string uniqueName = data.PropertyName;
+                    int i =0;
+                    while (nodes.Keys.Contains(uniqueName)){
+                        uniqueName = data.PropertyName+" ["+(++i)+"]";
+                    }
+                    nodes.Add(uniqueName, data);
+                }
+            }
+            return nodes.Count > 0;
+        }
 
 
         void OnGUIToolBar(){            
