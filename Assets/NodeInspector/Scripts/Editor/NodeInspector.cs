@@ -41,6 +41,7 @@ namespace NodeInspector.Editor{
                 return false;
             }
             ScriptableObject so = Selection.activeObject as ScriptableObject;
+
             nodes = new Dictionary<string, GraphData>();
             foreach (FieldInfo fieldInfo in  so.GetType().GetFields()){
                 GraphData data;
@@ -80,28 +81,17 @@ namespace NodeInspector.Editor{
                     foreach (Type nodeType in types){
                         string menuPath = nodeType.Name ;
                         Type attributeType = typeof(NodeMenuItemAttribute);
-
                         NodeMenuItemAttribute attr = (NodeMenuItemAttribute)Attribute.GetCustomAttribute(nodeType, attributeType);
                         if (attr != null && !string.IsNullOrEmpty(attr.MenuPath)){
                             menuPath = attr.MenuPath;
                         }
 
-
-                        toolsMenu.AddItem(new GUIContent(menuPath), false,  () => {
-                            ScriptableObject instance = ScriptableObject.CreateInstance(nodeType);
-                            CurrentGraph.ItemList.Add(instance);
-                        });
+                        toolsMenu.AddItem(new GUIContent(menuPath), false,  (incomeNodeType) => {
+                            CurrentGraph.AddNewAsset(incomeNodeType as Type);
+                        }, nodeType);
 
                     }
                 }
-
-
-                toolsMenu.AddItem(new GUIContent("Menu1/Menu2/Menu3"), false, null);
-
-                toolsMenu.AddDisabledItem(new GUIContent("Menu2"));
-                toolsMenu.AddSeparator("");
-                toolsMenu.AddItem(new GUIContent("Help..."), false, null);
-                // Offset menu from right of editor window
 
                 Rect rect = GUILayoutUtility.GetLastRect();
                 rect.y+= EditorStyles.toolbar.fixedHeight/2.0f;

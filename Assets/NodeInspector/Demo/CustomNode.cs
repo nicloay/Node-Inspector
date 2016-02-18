@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 
 namespace NodeInspector.Demo{
-    [NodeMenuItem("BaseClass")]
+    [NodeMenuItem("CustomNode")]
     public class CustomNode : ScriptableObject{
         public int          IntProperty ;
         public List<string> ListProperty;

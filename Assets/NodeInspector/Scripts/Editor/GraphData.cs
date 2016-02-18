@@ -4,6 +4,7 @@ using System.Collections;
 using System.Reflection;
 using System;
 using System.Linq;
+using UnityEditor;
 
 namespace NodeInspector.Editor{
     
@@ -17,9 +18,21 @@ namespace NodeInspector.Editor{
         {            
         }
 
+
+        public void AddNewAsset(Type nodeType){            
+            ScriptableObject instance = ScriptableObject.CreateInstance(nodeType);
+            AssetDatabase.AddObjectToAsset(instance, ParentObject);
+            instance.hideFlags = HideFlags.HideInHierarchy;
+            ItemList.Add(instance);
+            AssetDatabase.ImportAsset(AssetDatabase.GetAssetPath(ParentObject));
+        }
+
         public static bool CanCreateGraphData(ScriptableObject parentObject, FieldInfo fieldInfo, out GraphData graphData){
             graphData = null;
             object value = fieldInfo.GetValue(parentObject);
+            if (value == null){
+                return false;
+            }
             Type valueType = value.GetType();
             if (valueType.IsGenericType && (valueType.GetGenericTypeDefinition() == typeof(List<>))
                 && typeof(ScriptableObject).IsAssignableFrom( valueType.GetGenericArguments()[0])){
@@ -44,5 +57,8 @@ namespace NodeInspector.Editor{
             }
             return false;
         }
+
+
+
     }
 }
