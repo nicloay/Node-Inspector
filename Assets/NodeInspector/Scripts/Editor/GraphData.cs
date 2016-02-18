@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System.Collections;
 using System.Reflection;
 using System;
 using System.Linq;
@@ -10,7 +11,7 @@ namespace NodeInspector.Editor{
         public ScriptableObject ParentObject;
         public Type ItemBaseType{get; private set;}
         public String PropertyName;
-        public List<ScriptableObject>   ItemList;
+        public IList  ItemList;
 
         private GraphData()
         {            
@@ -32,7 +33,7 @@ namespace NodeInspector.Editor{
                 if (attribute != null){
                     graphData = new GraphData();
                     graphData.ItemBaseType = valueType.GetGenericArguments()[0];
-                    graphData.ItemList = value as List<ScriptableObject>;
+                    graphData.ItemList = value as IList;
                     graphData.PropertyName = attribute.Name;
                     graphData.ParentObject = parentObject;
                     if (string.IsNullOrEmpty(graphData.PropertyName)){

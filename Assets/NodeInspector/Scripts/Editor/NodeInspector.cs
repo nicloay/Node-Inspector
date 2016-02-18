@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Linq;
 using NodeInspector;
 using System.Collections.Generic;
+using System;
 
 namespace NodeInspector.Editor{    
     public class NodeInspector : EditorWindow {
@@ -27,7 +28,12 @@ namespace NodeInspector.Editor{
         }
 
         Dictionary<string, GraphData> nodes;
-        int selectedGraph;
+        int currentGraphId;
+        GraphData CurrentGraph{
+            get{
+                return nodes.Values.ElementAt(currentGraphId);
+            }
+        }
 
 
         bool CheckSelectedObject(){
@@ -67,8 +73,30 @@ namespace NodeInspector.Editor{
             {          
 
                 GenericMenu toolsMenu = new GenericMenu();
+                if (CurrentGraph != null){
+                    var types = AppDomain.CurrentDomain.GetAssemblies()
+                        .SelectMany(s=>s.GetTypes())
+                        .Where(p=>CurrentGraph.ItemBaseType.IsAssignableFrom(p));
+                    foreach (Type nodeType in types){
+                        string menuPath = nodeType.Name ;
+                        Type attributeType = typeof(NodeMenuItemAttribute);
 
-                toolsMenu.AddItem(new GUIContent("Menu1"), false, null);
+                        NodeMenuItemAttribute attr = (NodeMenuItemAttribute)Attribute.GetCustomAttribute(nodeType, attributeType);
+                        if (attr != null && !string.IsNullOrEmpty(attr.MenuPath)){
+                            menuPath = attr.MenuPath;
+                        }
+
+
+                        toolsMenu.AddItem(new GUIContent(menuPath), false,  () => {
+                            ScriptableObject instance = ScriptableObject.CreateInstance(nodeType);
+                            CurrentGraph.ItemList.Add(instance);
+                        });
+
+                    }
+                }
+
+
+                toolsMenu.AddItem(new GUIContent("Menu1/Menu2/Menu3"), false, null);
 
                 toolsMenu.AddDisabledItem(new GUIContent("Menu2"));
                 toolsMenu.AddSeparator("");
@@ -83,7 +111,7 @@ namespace NodeInspector.Editor{
 
 
         void GUICreateGraphsItems(){            
-            selectedGraph = EditorGUILayout.Popup(selectedGraph, nodes.Keys.ToArray(), EditorStyles.toolbarPopup);
+            currentGraphId = EditorGUILayout.Popup(currentGraphId, nodes.Keys.ToArray(), EditorStyles.toolbarPopup);
         }
 
 
