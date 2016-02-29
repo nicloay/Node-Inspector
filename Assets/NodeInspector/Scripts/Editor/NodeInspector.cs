@@ -15,15 +15,40 @@ namespace NodeInspector.Editor{
             if (!CheckSelectedObject()){
                 return;
             }
-
+            List<NodeGUI> nodeGUIS  = new List<NodeGUI>();
             OnGUIToolBar();
+            Rect buttonRect = new Rect();
             BeginWindows();
 
             foreach(var graphData in CurrentGraph.ItemList){
-                (new NodeGUI((ScriptableObjectNode)graphData)).OnGUI();
+                NodeGUI nodeGUI = new NodeGUI((ScriptableObjectNode)graphData);
+                nodeGUI.OnGUI();
+                nodeGUIS.Add(nodeGUI);               
             }
 
             EndWindows();
+
+            if (Event.current.type == EventType.Repaint){
+                foreach (NodeGUI node in nodeGUIS){
+                    RenderButtons(node, node.WindowRect);
+                }
+            }
+        }
+
+        static void RenderButtons(NodeGUI node, Rect WindowRect)
+        {
+            foreach (JoinData join in node.Joins)
+            {
+                Rect buttonRect = WindowRect;
+                buttonRect.x += WindowRect.width;
+                buttonRect.y += join.FieldInternalRect.y;
+                buttonRect.width = buttonRect.height = join.FieldInternalRect.height;
+                Debug.Log(buttonRect);
+                if (Event.current.type == EventType.Repaint)
+                {
+                    GUI.Button(buttonRect, "1", EditorStyles.miniButtonRight);
+                }
+            }
         }
 
         Dictionary<string, GraphData> nodes;

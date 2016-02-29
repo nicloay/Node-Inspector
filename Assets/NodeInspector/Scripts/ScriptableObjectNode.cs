@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 
 
 namespace NodeInspector {
-    public class ScriptableObjectNode : ScriptableObject {
+    public class ScriptableObjectNode : ScriptableObject {        
         [HideInInspector]
-        public Rect EditorWindowPosition;
+        public Rect EditorWindowRect;
     }
 }
