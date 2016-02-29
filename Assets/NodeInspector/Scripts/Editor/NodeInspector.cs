@@ -10,10 +10,7 @@ using System;
 namespace NodeInspector.Editor{    
     public class NodeInspector : EditorWindow {
         
-
         Rect defaultWindowRect = new Rect(100,100,200,200);
-        NodeGUI soGUI = new NodeGUI(new ScriptableObject());
-        NodeGUI soGUI2 = new NodeGUI(new ScriptableObject());
         void OnGUI(){
             if (!CheckSelectedObject()){
                 return;
@@ -22,8 +19,10 @@ namespace NodeInspector.Editor{
             OnGUIToolBar();
             BeginWindows();
 
-            soGUI.OnGUI();
-            soGUI2.OnGUI();
+            foreach(var graphData in CurrentGraph.ItemList){
+                (new NodeGUI((ScriptableObjectNode)graphData)).OnGUI();
+            }
+
             EndWindows();
         }
 
