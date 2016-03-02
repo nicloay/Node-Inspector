@@ -36,6 +36,7 @@ namespace NodeInspector.Editor {
         void DoWindow(int id)
         {            
             DoDrawDefaultInspector(serializedObject);
+			AddJointIfAcceptIncognito ();
             GUI.DragWindow();
         }
 
@@ -54,10 +55,9 @@ namespace NodeInspector.Editor {
                         EditorGUILayout.PropertyField(iterator, true, new GUILayoutOption[0]);                            
                     } else {
                         EditorGUILayout.LabelField(iterator.name);
-                        if (Event.current.type == EventType.Repaint){                            
-                            Rect lastRect = GUILayoutUtility.GetLastRect();
-                            Joints.Add(new JointData(lastRect, JointType.OneToMany_IN));
-                        }
+                        Rect lastRect = GUILayoutUtility.GetLastRect();
+						Joints.Add(new JointData(iterator, lastRect, scriptableObject.EditorWindowRect, jointType));
+                    
                     }
                 }                    
             }
@@ -78,5 +78,12 @@ namespace NodeInspector.Editor {
 
         }
 
+		void AddJointIfAcceptIncognito ()
+		{
+			JointAttribute joint = (JointAttribute)Attribute.GetCustomAttribute (scriptableObject.GetType (), typeof(JointAttribute));
+			if (joint != null) {
+				Joints.Add (new JointData (scriptableObject, windowRect, scriptableObject.EditorWindowRect, JointType.Incognito_In));
+			}
+		}
     }
 }

@@ -4,6 +4,7 @@ using NodeInspector;
 
 
 namespace NodeInspector.Demo{    
+	[CreateAssetMenu]
     [Joint(JointType.Incognito_In)]
     [NodeMenuItem("IncognitoNode")]
     public class IncognitoNode : ScriptableObjectNode {
