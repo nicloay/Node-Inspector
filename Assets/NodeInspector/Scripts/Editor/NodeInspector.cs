@@ -93,6 +93,8 @@ namespace NodeInspector.Editor{
             GUILayout.EndHorizontal();
         }
 
+
+        //FIXME: show only nodes accepted by current graph
         void GUICreateMenuItems(){
             if (GUILayout.Button("Create",EditorStyles.toolbarDropDown, new GUILayoutOption[0]))
             {          

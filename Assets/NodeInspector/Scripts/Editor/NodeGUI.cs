@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
+using NodeInspector;
+using System;
 
 namespace NodeInspector.Editor {
     public class NodeGUI {
@@ -47,7 +49,8 @@ namespace NodeInspector.Editor {
             for (bool enterChildren = true; iterator.NextVisible(enterChildren); enterChildren = false){
                 if (iterator.propertyType != SerializedPropertyType.ObjectReference || !(iterator.objectReferenceValue is MonoScript)){                    
                     //Check if it's node here
-                    if (iterator.propertyType != SerializedPropertyType.ObjectReference){
+                    JoinType joinType = GetPropertyJoinType(iterator);
+                    if (joinType == JoinType.Nan){
                         EditorGUILayout.PropertyField(iterator, true, new GUILayoutOption[0]);                            
                     } else {
                         EditorGUILayout.LabelField(iterator.name);
@@ -61,5 +64,19 @@ namespace NodeInspector.Editor {
             obj.ApplyModifiedProperties();
             return EditorGUI.EndChangeCheck();
         }
+
+        JoinType GetPropertyJoinType(SerializedProperty property){
+            if (property.propertyType != SerializedPropertyType.ObjectReference){
+                return JoinType.Nan;
+            }
+            JoinAttribute join =(JoinAttribute) Attribute.GetCustomAttribute(property.serializedObject.targetObject.GetType().GetField(property.name), typeof(JoinAttribute));
+            if (join == null){
+                return JoinType.Nan;
+            } else {
+                return join.JoinType;
+            }
+
+        }
+
     }
 }
