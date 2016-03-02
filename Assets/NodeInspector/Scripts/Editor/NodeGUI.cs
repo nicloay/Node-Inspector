@@ -9,7 +9,7 @@ namespace NodeInspector.Editor {
     public class NodeGUI {
         ScriptableObjectNode scriptableObject;
         SerializedObject serializedObject;
-        public List<JoinData> Joins;
+        public List<JointData> Joints;
         Rect windowRect = new Rect(100,100,200,200);
             
         public Rect WindowRect{
@@ -21,7 +21,7 @@ namespace NodeInspector.Editor {
         public NodeGUI(ScriptableObjectNode scriptableObject){
             this.scriptableObject = scriptableObject;
             serializedObject = new SerializedObject(scriptableObject);
-            Joins = new List<JoinData>();
+            Joints = new List<JointData>();
         }
 
 
@@ -49,14 +49,14 @@ namespace NodeInspector.Editor {
             for (bool enterChildren = true; iterator.NextVisible(enterChildren); enterChildren = false){
                 if (iterator.propertyType != SerializedPropertyType.ObjectReference || !(iterator.objectReferenceValue is MonoScript)){                    
                     //Check if it's node here
-                    JoinType joinType = GetPropertyJoinType(iterator);
-                    if (joinType == JoinType.Nan){
+					JointType jointType = GetPropertyJointType(iterator);
+                    if (jointType == JointType.Nan){
                         EditorGUILayout.PropertyField(iterator, true, new GUILayoutOption[0]);                            
                     } else {
                         EditorGUILayout.LabelField(iterator.name);
                         if (Event.current.type == EventType.Repaint){                            
                             Rect lastRect = GUILayoutUtility.GetLastRect();
-                            Joins.Add(new JoinData(lastRect, JoinType.OneToMany_IN));
+                            Joints.Add(new JointData(lastRect, JointType.OneToMany_IN));
                         }
                     }
                 }                    
@@ -65,15 +65,15 @@ namespace NodeInspector.Editor {
             return EditorGUI.EndChangeCheck();
         }
 
-        JoinType GetPropertyJoinType(SerializedProperty property){
+        JointType GetPropertyJointType(SerializedProperty property){
             if (property.propertyType != SerializedPropertyType.ObjectReference){
-                return JoinType.Nan;
+                return JointType.Nan;
             }
-            JoinAttribute join =(JoinAttribute) Attribute.GetCustomAttribute(property.serializedObject.targetObject.GetType().GetField(property.name), typeof(JoinAttribute));
-            if (join == null){
-                return JoinType.Nan;
+			JointAttribute joint=(JointAttribute) Attribute.GetCustomAttribute(property.serializedObject.targetObject.GetType().GetField(property.name), typeof(JointAttribute));
+            if (joint == null){
+                return JointType.Nan;
             } else {
-                return join.JoinType;
+                return joint.JointType;
             }
 
         }

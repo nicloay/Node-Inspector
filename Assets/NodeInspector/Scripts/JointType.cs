@@ -2,7 +2,7 @@
 using System.Collections;
 
 namespace NodeInspector{
-    public enum JoinType {
+    public enum JointType {
         Nan,
         OneToOne_IN,
         OneToMany_IN,
@@ -13,7 +13,7 @@ namespace NodeInspector{
         ManyToMany_IN,
         ManyToMany_OUT,
         OneToOne_Incognito_OUT,
-        OneToMany_Incognito_OUT,
+        ManyToOne_Incognito_OUT,
         Incognito_In //This works only for class attribute
     }
 }

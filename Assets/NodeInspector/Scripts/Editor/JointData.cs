@@ -2,14 +2,14 @@
 
 
 namespace NodeInspector.Editor{
-    public class JoinData {
+    public class JointData {
         public Rect FieldInternalRect;//rect in window coordinates
-        public JoinType JoinType;
+        public JointType JointType;
 
 
-        public JoinData(Rect fieldInternalRect, JoinType joinType){
+        public JointData(Rect fieldInternalRect, JointType jointType){
             FieldInternalRect = fieldInternalRect;
-            JoinType = joinType;
+            JointType = jointType;
         }
     
     }

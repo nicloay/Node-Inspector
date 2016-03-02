@@ -37,12 +37,12 @@ namespace NodeInspector.Editor{
 
         static void RenderButtons(NodeGUI node, Rect WindowRect)
         {
-            foreach (JoinData join in node.Joins)
+			foreach (JointData joint in node.Joints)
             {
                 Rect buttonRect = WindowRect;
                 buttonRect.x += WindowRect.width;
-                buttonRect.y += join.FieldInternalRect.y;
-                buttonRect.width = buttonRect.height = join.FieldInternalRect.height;
+                buttonRect.y += joint.FieldInternalRect.y;
+                buttonRect.width = buttonRect.height = joint.FieldInternalRect.height;
                 Debug.Log(buttonRect);
                 if (Event.current.type == EventType.Repaint)
                 {
