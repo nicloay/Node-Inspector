@@ -33,11 +33,14 @@ namespace NodeInspector.Editor{
                     RenderButtons(node, node.WindowRect);
                 }
 				ConnectionsCollection cCollection = new ConnectionsCollection (nodeGUIS);
-				foreach (ConnectionData cData in cCollection.allConnections) {
+                Handles.BeginGUI();
+                foreach (ConnectionData cData in cCollection.allConnections) {
 					Debug.LogFormat ("{0} -> {1}", cData.OutputJoint.BezierSidePoint, cData.InputJoint.BezierSidePoint);
 
-					Handles.DrawBezier (cData.OutputJoint.BezierSidePoint, cData.InputJoint.BezierSidePoint, Vector3.right, Vector3.left, Color.green, EditorGUIUtility.whiteTexture, 1.0f);
+					Handles.DrawBezier (cData.OutputJoint.BezierSidePoint, cData.InputJoint.BezierSidePoint,
+                        cData.OutputJoint.BezierSidePoint + Vector2.right*50, cData.InputJoint.BezierSidePoint + Vector2.left*50, Color.gray, null, 3.0f);
 				}
+                Handles.EndGUI();
             }
 
         }

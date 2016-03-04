@@ -20,7 +20,7 @@ namespace NodeInspector.Editor{
 					if (jointData.JointType == JointType.Incognito_In) {
 						ConnectionData connectionData = new ConnectionData ();
 						connectionData.InputJoint = jointData;
-						incognitoInConnections.Add (jointData.RefObject, connectionData);
+                        incognitoInConnections.Add (jointData.ObjectRefferenceValue, connectionData);
 					} 
 				}
 			}
@@ -30,10 +30,10 @@ namespace NodeInspector.Editor{
 			foreach (NodeGUI node in allNodes) {
 				foreach (JointData jointData in node.Joints) {
 					if (jointData.JointType == JointType.OneToOne_Incognito_OUT || jointData.JointType == JointType.ManyToOne_Incognito_OUT) {
-						if (jointData.SingleOutputObject != null){
+                        if (jointData.ObjectRefferenceValue != null){
 							ConnectionData connectionData;
-							if (incognitoInConnections.ContainsKey(jointData.SingleOutputObject)){
-								connectionData = incognitoInConnections[jointData.SingleOutputObject];
+                            if (incognitoInConnections.ContainsKey(jointData.ObjectRefferenceValue)){
+                                connectionData = incognitoInConnections[jointData.ObjectRefferenceValue];
 								connectionData.OutputJoint = jointData;
 								allConnections.Add(connectionData);
 							} 
