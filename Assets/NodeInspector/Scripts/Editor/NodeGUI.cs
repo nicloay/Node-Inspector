@@ -56,9 +56,7 @@ namespace NodeInspector.Editor {
                     } else {
                         EditorGUILayout.LabelField(iterator.name);
                         Rect lastRect = GUILayoutUtility.GetLastRect();
-                        Debug.Log(iterator.objectReferenceValue);
-                        Joints.Add(new JointData(iterator.objectReferenceValue, lastRect, scriptableObject.EditorWindowRect, jointType));
-                    
+                        Joints.Add(new JointData(iterator.objectReferenceValue, lastRect, scriptableObject.EditorWindowRect, jointType));                    
                     }
                 }                    
             }

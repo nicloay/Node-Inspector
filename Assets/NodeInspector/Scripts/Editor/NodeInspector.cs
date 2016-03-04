@@ -35,10 +35,8 @@ namespace NodeInspector.Editor{
 				ConnectionsCollection cCollection = new ConnectionsCollection (nodeGUIS);
                 Handles.BeginGUI();
                 foreach (ConnectionData cData in cCollection.allConnections) {
-					Debug.LogFormat ("{0} -> {1}", cData.OutputJoint.BezierSidePoint, cData.InputJoint.BezierSidePoint);
-
-					Handles.DrawBezier (cData.OutputJoint.BezierSidePoint, cData.InputJoint.BezierSidePoint,
-                        cData.OutputJoint.BezierSidePoint + Vector2.right*50, cData.InputJoint.BezierSidePoint + Vector2.left*50, Color.gray, null, 3.0f);
+                    Handles.DrawBezier (cData.OutputJoint.BezierSidePoint, cData.InputJoint.BezierSidePoint,
+                        cData.OutputJoint.BezierNormal, cData.InputJoint.BezierNormal, Color.gray, null, 3.0f);
 				}
                 Handles.EndGUI();
             }
@@ -48,14 +46,10 @@ namespace NodeInspector.Editor{
         static void RenderButtons(NodeGUI node, Rect WindowRect)
         {
 			foreach (JointData joint in node.Joints)
-            {
-                Rect buttonRect = WindowRect;
-                buttonRect.x += WindowRect.width;
-                buttonRect.y += joint.FieldInternalRect.y;
-                buttonRect.width = buttonRect.height = joint.FieldInternalRect.height;
+            {                
                 if (Event.current.type == EventType.Repaint)
                 {
-                    GUI.Button(buttonRect, "1", EditorStyles.miniButtonRight);
+                    GUI.Button(joint.KnobButtonRect, joint.KnobButtonCaption, joint.KnobButtonStyle);
                 }
             }
         }
