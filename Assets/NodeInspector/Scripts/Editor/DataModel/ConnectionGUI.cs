@@ -11,7 +11,7 @@ namespace NodeInspector.Editor{
 		public JointData OutputJoint { get; set;}
         public bool Focused           {get; private set;}
 
-        public static ConnectionGUI GetInstance(int ControlID){
+        public static ConnectionGUI GetInstance(int ControlID){            
             ConnectionGUI result = (ConnectionGUI)GUIUtility.GetStateObject(typeof(ConnectionGUI), ControlID);
             result.ControlID = ControlID;
             return result;
@@ -43,6 +43,18 @@ namespace NodeInspector.Editor{
                         Handles.EndGUI();
                         break;
                     }                   
+                case EventType.KeyDown:
+                    {
+                        if (GUIUtility.hotControl == ControlID 
+                            && (Event.current.keyCode == KeyCode.Delete || Event.current.keyCode == KeyCode.Backspace)){
+                            Debug.Log("deleting !!!");
+                            InputJoint.ClearJointLink();
+                            OutputJoint.ClearJointLink();
+                            GUIUtility.hotControl = 0;
+                            Event.current.Use();
+                        }
+                        break;
+                    }
             }
         }
 	}

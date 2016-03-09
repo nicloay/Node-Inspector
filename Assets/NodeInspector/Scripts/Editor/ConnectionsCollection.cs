@@ -6,7 +6,7 @@ namespace NodeInspector.Editor{
 	public class ConnectionsCollection {
 		public List<ConnectionGUI> allConnections;
 
-		public ConnectionsCollection(List<NodeGUI> allNodes){
+        public ConnectionsCollection(List<NodeGUI> allNodes){
 			allConnections = new List<ConnectionGUI> ();
 
 

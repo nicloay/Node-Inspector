@@ -57,7 +57,7 @@ namespace NodeInspector.Editor{
                 return nodes.Values.ElementAt(currentGraphId);
             }
         }
-
+            
 
         bool CheckSelectedObject(){
             if (Selection.activeObject == null || !(Selection.activeObject is ScriptableObject)){

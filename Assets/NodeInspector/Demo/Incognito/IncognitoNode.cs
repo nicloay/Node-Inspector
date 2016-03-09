@@ -11,6 +11,7 @@ namespace NodeInspector.Demo{
 		[Joint(JointType.OneToOne_Incognito_OUT)]
         public IncognitoNode NextNode;
 
+
         public IncognitoNode UnusedNode;
     }    
 }

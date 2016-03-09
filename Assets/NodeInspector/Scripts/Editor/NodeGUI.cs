@@ -64,7 +64,7 @@ namespace NodeInspector.Editor {
                         EditorGUILayout.LabelField(iterator.name);
                                                  
                         Rect lastRect = GUILayoutUtility.GetLastRect();                            
-                        AddJointDataOrUpdate(iterator.objectReferenceValue, lastRect, jointType);
+                        AddJointDataOrUpdate(iterator, lastRect, jointType);
                     }
                 }                    
             }
@@ -89,15 +89,20 @@ namespace NodeInspector.Editor {
 		{
 			JointAttribute joint = (JointAttribute)Attribute.GetCustomAttribute (scriptableObject.GetType (), typeof(JointAttribute));
 			if (joint != null) {
-                AddJointDataOrUpdate(scriptableObject, windowRect, JointType.Incognito_In);
-				//Joints.Add (new JointData (scriptableObject, windowRect, scriptableObject.EditorWindowRect, JointType.Incognito_In));
+                JointData jData = JointData.GetInstance(GUIUtility.GetControlID(FocusType.Passive)
+                    , scriptableObject, windowRect, scriptableObject.EditorWindowRect, JointType.Incognito_In);
+                if (!Joints.Contains(jData))
+                {
+                    Joints.Add(jData);
+                }
 			}
 		}
 
                
-        void AddJointDataOrUpdate(UnityEngine.Object objectRefferencevalue, Rect lastRect, JointType jointType)
+        void AddJointDataOrUpdate(SerializedProperty serializedProperty, Rect lastRect, JointType jointType)
         {
-            JointData jData = JointData.GetInstance(GUIUtility.GetControlID(FocusType.Passive), objectRefferencevalue, lastRect, scriptableObject.EditorWindowRect, jointType);
+            serializedProperty = serializedProperty.serializedObject.FindProperty(serializedProperty.propertyPath);
+            JointData jData = JointData.GetInstance(GUIUtility.GetControlID(FocusType.Passive), serializedProperty, lastRect, scriptableObject.EditorWindowRect, jointType);
             if (!Joints.Contains(jData))
             {
                 Joints.Add(jData);

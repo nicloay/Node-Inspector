@@ -8,10 +8,11 @@ namespace NodeInspector.Editor{
         const float KnobSize = 15.0f;
         const float BezierNormalMagnitude = 30.0f;
         Rect windowRect;
-        public Rect         FieldInternalRect     {get; private set;}
-		public JointType 	JointType			  {get; private set;}
-        public Object       ObjectRefferenceValue {get; private set;}
-		
+        public Rect               FieldInternalRect     {get; private set;}
+		public JointType 	      JointType			    {get; private set;}
+        public SerializedProperty SerializedProperty    {get; private set;} //we have this property if it's link to property
+        public Object             ObjectRefferenceValue {get; private set;}  //value or link to anonimous class
+
 
         public GUIStyle KnobButtonStyle     {get; private set;}
         public Vector2  BezierNormal        {get; private set;}
@@ -21,11 +22,22 @@ namespace NodeInspector.Editor{
 
         public int ControlID {get; private set;}
 
+        public static JointData GetInstance(int controlID, SerializedProperty serializedProperty, Rect fieldInternalRect, Rect windowRect, JointType jointType){
+            JointData result = GetInstance(controlID, fieldInternalRect, windowRect, jointType);
+            result.SerializedProperty = serializedProperty ;
+            result.ObjectRefferenceValue = serializedProperty.objectReferenceValue;
+            return result;
+        }
 
-        public static JointData GetInstance(int controlID, Object objectRefferenceValue, Rect fieldInternalRect, Rect windowRect, JointType jointType){
+        public static JointData GetInstance(int controlID, Object scriptableObject, Rect fieldInternalRect, Rect windowRect, JointType jointType){
+            JointData result = GetInstance(controlID, fieldInternalRect, windowRect, jointType);
+            result.ObjectRefferenceValue = scriptableObject;
+            return result;
+        }
+
+        static JointData GetInstance(int controlID, Rect fieldInternalRect, Rect windowRect, JointType jointType){
             JointData result = (JointData)GUIUtility.GetStateObject(typeof(JointData), controlID);
             result.ControlID = controlID;
-            result.ObjectRefferenceValue = objectRefferenceValue;
             if (Event.current.type == EventType.repaint){
                 result.FieldInternalRect = fieldInternalRect;
                 result.windowRect = windowRect;                
@@ -36,7 +48,24 @@ namespace NodeInspector.Editor{
             return result;
         }
 
+        public void ClearJointLink(){
+            
+            switch(JointType){
+                case JointType.OneToOne_Incognito_OUT:
+                    SerializedProperty.serializedObject.Update();
+                    SerializedProperty.objectReferenceValue = null;
+                    SerializedProperty.serializedObject.ApplyModifiedProperties();
 
+                    GUI.changed = true;
+                    break;
+                case JointType.Incognito_In:
+                    //don't need to clear anything;
+                    break;
+                default:
+                    Debug.LogError("Unsupported type");
+                    break;
+            }
+        }
 
 
         void SetupGUIVariables()
