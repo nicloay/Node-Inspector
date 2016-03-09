@@ -15,32 +15,34 @@ namespace NodeInspector.Editor{
             if (!CheckSelectedObject()){
                 return;
             }
+
             List<NodeGUI> nodeGUIS  = new List<NodeGUI>();
             OnGUIToolBar();
             Rect buttonRect = new Rect();
-            BeginWindows();
 
             foreach(var graphData in CurrentGraph.ItemList){
-                NodeGUI nodeGUI = new NodeGUI((ScriptableObjectNode)graphData);
-                nodeGUI.OnGUI();
+                NodeGUI nodeGUI = NodeGUI.GetInstance(GUIUtility.GetControlID(FocusType.Passive), (ScriptableObjectNode)graphData);               
                 nodeGUIS.Add(nodeGUI);               
             }
 
-            EndWindows();
-
-			if (Event.current.type == EventType.Repaint){
-                foreach (NodeGUI node in nodeGUIS){
-                    RenderButtons(node, node.WindowRect);
-                }
-				ConnectionsCollection cCollection = new ConnectionsCollection (nodeGUIS);
-                Handles.BeginGUI();
-                foreach (ConnectionData cData in cCollection.allConnections) {
-                    Handles.DrawBezier (cData.OutputJoint.BezierSidePoint, cData.InputJoint.BezierSidePoint,
-                        cData.OutputJoint.BezierNormal, cData.InputJoint.BezierNormal, Color.gray, null, 3.0f);
-				}
-                Handles.EndGUI();
+            BeginWindows();
+            foreach (NodeGUI node in nodeGUIS){
+                node.OnGUI();
             }
+            EndWindows();
+            
+            foreach (NodeGUI node in nodeGUIS){
+                RenderButtons(node, node.WindowRect);
+            }
+            ConnectionsCollection cCollection = new ConnectionsCollection (nodeGUIS);
 
+            Debug.Log(Event.current.type + "  " + cCollection.allConnections.Count);
+            foreach (ConnectionGUI connectionGUI in cCollection.allConnections) {
+                connectionGUI.OnGUI();
+			}
+
+            //Debug.Log("" + GUIUtility.hotControl);
+            //HandleKeyDown();
         }
 
         static void RenderButtons(NodeGUI node, Rect WindowRect)
@@ -133,6 +135,17 @@ namespace NodeInspector.Editor{
             currentGraphId = EditorGUILayout.Popup(currentGraphId, nodes.Keys.ToArray(), EditorStyles.toolbarPopup);
         }
 
+        void HandleKeyDown()
+        {
+            if (Event.current.isMouse && Event.current.button == 0){
+                
+            }
+
+            if (Event.current.keyCode == KeyCode.Delete || Event.current.keyCode == KeyCode.Backspace){
+                
+                Debug.LogFormat("delete pressed object = {0}", GUIUtility.GetControlID(FocusType.Passive));
+            }
+        }
 
         [MenuItem("Test/GUIWindow")]
         static void Init(){

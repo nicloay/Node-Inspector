@@ -7,6 +7,7 @@ using System;
 
 namespace NodeInspector.Editor {
     public class NodeGUI {
+        public int ControlID {get; private set;}
         ScriptableObjectNode scriptableObject;
         SerializedObject serializedObject;
         public List<JointData> Joints;
@@ -18,10 +19,14 @@ namespace NodeInspector.Editor {
             }
         }
 
-        public NodeGUI(ScriptableObjectNode scriptableObject){
-            this.scriptableObject = scriptableObject;
-            serializedObject = new SerializedObject(scriptableObject);
-            Joints = new List<JointData>();
+        public static NodeGUI GetInstance(int ControlID, ScriptableObjectNode scriptableObjectNode){
+            NodeGUI result = (NodeGUI) GUIUtility.GetStateObject(typeof(NodeGUI), ControlID);
+            if (result.scriptableObject != scriptableObjectNode){
+                result.scriptableObject = scriptableObjectNode;
+                result.serializedObject = new SerializedObject(scriptableObjectNode);
+                result.Joints = new List<JointData>();
+            }
+            return result;
         }
 
 
@@ -34,7 +39,8 @@ namespace NodeInspector.Editor {
         }
 
         void DoWindow(int id)
-        {            
+        {          
+            
             DoDrawDefaultInspector(serializedObject);
 			AddJointIfAcceptIncognito ();
             GUI.DragWindow();
@@ -47,6 +53,7 @@ namespace NodeInspector.Editor {
             EditorGUI.BeginChangeCheck();
             obj.Update();
             SerializedProperty iterator = obj.GetIterator();
+            bool fillJointCollection = (Joints.Count == 0);
             for (bool enterChildren = true; iterator.NextVisible(enterChildren); enterChildren = false){
                 if (iterator.propertyType != SerializedPropertyType.ObjectReference || !(iterator.objectReferenceValue is MonoScript)){                    
                     //Check if it's node here
@@ -55,8 +62,9 @@ namespace NodeInspector.Editor {
                         EditorGUILayout.PropertyField(iterator, true, new GUILayoutOption[0]);                            
                     } else {
                         EditorGUILayout.LabelField(iterator.name);
-                        Rect lastRect = GUILayoutUtility.GetLastRect();
-                        Joints.Add(new JointData(iterator.objectReferenceValue, lastRect, scriptableObject.EditorWindowRect, jointType));                    
+                                                 
+                        Rect lastRect = GUILayoutUtility.GetLastRect();                            
+                        AddJointDataOrUpdate(iterator.objectReferenceValue, lastRect, jointType);
                     }
                 }                    
             }
@@ -81,8 +89,19 @@ namespace NodeInspector.Editor {
 		{
 			JointAttribute joint = (JointAttribute)Attribute.GetCustomAttribute (scriptableObject.GetType (), typeof(JointAttribute));
 			if (joint != null) {
-				Joints.Add (new JointData (scriptableObject, windowRect, scriptableObject.EditorWindowRect, JointType.Incognito_In));
+                AddJointDataOrUpdate(scriptableObject, windowRect, JointType.Incognito_In);
+				//Joints.Add (new JointData (scriptableObject, windowRect, scriptableObject.EditorWindowRect, JointType.Incognito_In));
 			}
 		}
+
+               
+        void AddJointDataOrUpdate(UnityEngine.Object objectRefferencevalue, Rect lastRect, JointType jointType)
+        {
+            JointData jData = JointData.GetInstance(GUIUtility.GetControlID(FocusType.Passive), objectRefferencevalue, lastRect, scriptableObject.EditorWindowRect, jointType);
+            if (!Joints.Contains(jData))
+            {
+                Joints.Add(jData);
+            }
+        }
     }
 }

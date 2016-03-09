@@ -19,14 +19,22 @@ namespace NodeInspector.Editor{
         public Rect     KnobButtonRect      {get; private set;}
         public string   KnobButtonCaption   {get; private set;}
 
+        public int ControlID {get; private set;}
 
-        public JointData(Object objectRefferenceValue, Rect fieldInternalRect, Rect windowRect, JointType jointType){
-            ObjectRefferenceValue = objectRefferenceValue;
-			FieldInternalRect = fieldInternalRect;
-            JointType = jointType;
-			this.windowRect = windowRect;
-            SetupGUIVariables();
+
+        public static JointData GetInstance(int controlID, Object objectRefferenceValue, Rect fieldInternalRect, Rect windowRect, JointType jointType){
+            JointData result = (JointData)GUIUtility.GetStateObject(typeof(JointData), controlID);
+            result.ControlID = controlID;
+            result.ObjectRefferenceValue = objectRefferenceValue;
+            result.FieldInternalRect = fieldInternalRect;
+            result.JointType = jointType;
+            result.windowRect = windowRect;
+            result.SetupGUIVariables();
+            return result;
         }
+
+
+
 
         void SetupGUIVariables()
         {
