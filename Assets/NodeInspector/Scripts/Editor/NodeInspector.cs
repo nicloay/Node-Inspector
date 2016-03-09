@@ -16,6 +16,10 @@ namespace NodeInspector.Editor{
                 return;
             }
 
+            if (Event.current.type == EventType.ValidateCommand && Event.current.commandName == "UndoRedoPerformed"){
+                Event.current.Use();
+            }
+
             List<NodeGUI> nodeGUIS  = new List<NodeGUI>();
             OnGUIToolBar();
             Rect buttonRect = new Rect();
