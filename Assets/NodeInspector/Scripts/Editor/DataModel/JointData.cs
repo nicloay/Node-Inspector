@@ -26,9 +26,12 @@ namespace NodeInspector.Editor{
             JointData result = (JointData)GUIUtility.GetStateObject(typeof(JointData), controlID);
             result.ControlID = controlID;
             result.ObjectRefferenceValue = objectRefferenceValue;
-            result.FieldInternalRect = fieldInternalRect;
+            if (Event.current.type == EventType.repaint){
+                result.FieldInternalRect = fieldInternalRect;
+                result.windowRect = windowRect;                
+            }
+
             result.JointType = jointType;
-            result.windowRect = windowRect;
             result.SetupGUIVariables();
             return result;
         }

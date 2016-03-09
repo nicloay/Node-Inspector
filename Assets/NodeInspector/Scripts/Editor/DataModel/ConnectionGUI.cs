@@ -9,40 +9,41 @@ namespace NodeInspector.Editor{
         public int ControlID {get; private set;}
         public JointData InputJoint  { get; set;}
 		public JointData OutputJoint { get; set;}
+        public bool Focused           {get; private set;}
 
-        public ConnectionGUI(){
-            ControlID = GUIUtility.GetControlID(FocusType.Passive);
+        public static ConnectionGUI GetInstance(int ControlID){
+            ConnectionGUI result = (ConnectionGUI)GUIUtility.GetStateObject(typeof(ConnectionGUI), ControlID);
+            result.ControlID = ControlID;
+            return result;
         }
 
         public void OnGUI(){
 
-            if (Event.current.type == EventType.mouseDown){                
-                Debug.LogFormat ("{0} {1} {2} {3} {4} =>> {5}", Event.current.mousePosition, OutputJoint.BezierSidePoint, InputJoint.BezierSidePoint,
-                    OutputJoint.BezierNormal, InputJoint.BezierNormal, HandleUtility.DistancePointBezier(Event.current.mousePosition, OutputJoint.BezierSidePoint, InputJoint.BezierSidePoint,
-                        OutputJoint.BezierNormal, InputJoint.BezierNormal));
+            if (Event.current.type == EventType.mouseDown){  
+                Focused = false;             
                 if (HandleUtility.DistancePointBezier(Event.current.mousePosition, OutputJoint.BezierSidePoint, InputJoint.BezierSidePoint,
-                    OutputJoint.BezierNormal, InputJoint.BezierNormal) <= BezierMinDistanceForSelection){
-                    Debug.LogFormat("close to bezier {0}", Event.current.type);
+                    OutputJoint.BezierNormal, InputJoint.BezierNormal) <= BezierMinDistanceForSelection){                   
                     GUIUtility.hotControl = ControlID;
-                    //Event.current.Use();
+                    Focused = true;
+                    Event.current.Use();
                 }    
             }
 
+
             switch(Event.current.GetTypeForControl(ControlID)){
                 case EventType.Repaint:
-                    {                        
-                        float width = GUIUtility.hotControl == ControlID ? 5.0f : 3.0f;
-                        Color color = GUIUtility.hotControl == ControlID ? Color.black : Color.gray;
+                    {                 
+                        Focused = Focused && ControlID == GUIUtility.hotControl;
+                        float width = Focused ? 3.0f : 3.0f;
+                        Color color = Focused ? Color.black : Color.gray;
 
                         Handles.BeginGUI();
                         Handles.DrawBezier (OutputJoint.BezierSidePoint, InputJoint.BezierSidePoint,
                             OutputJoint.BezierNormal, InputJoint.BezierNormal, color, null, width);            
                         Handles.EndGUI();
                         break;
-                    }                    
+                    }                   
             }
-
-           
         }
 	}
 }

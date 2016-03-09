@@ -36,23 +36,17 @@ namespace NodeInspector.Editor{
             }
             ConnectionsCollection cCollection = new ConnectionsCollection (nodeGUIS);
 
-            Debug.Log(Event.current.type + "  " + cCollection.allConnections.Count);
             foreach (ConnectionGUI connectionGUI in cCollection.allConnections) {
                 connectionGUI.OnGUI();
 			}
 
-            //Debug.Log("" + GUIUtility.hotControl);
-            //HandleKeyDown();
         }
 
         static void RenderButtons(NodeGUI node, Rect WindowRect)
         {
 			foreach (JointData joint in node.Joints)
-            {                
-                if (Event.current.type == EventType.Repaint)
-                {
-                    GUI.Button(joint.KnobButtonRect, joint.KnobButtonCaption, joint.KnobButtonStyle);
-                }
+            {                               
+                GUI.Button(joint.KnobButtonRect, joint.KnobButtonCaption, joint.KnobButtonStyle);
             }
         }
 
@@ -143,7 +137,7 @@ namespace NodeInspector.Editor{
 
             if (Event.current.keyCode == KeyCode.Delete || Event.current.keyCode == KeyCode.Backspace){
                 
-                Debug.LogFormat("delete pressed object = {0}", GUIUtility.GetControlID(FocusType.Passive));
+                //Debug.LogFormat("delete pressed object = {0}", GUIUtility.GetControlID(FocusType.Passive)); This is really wtf???
             }
         }
 

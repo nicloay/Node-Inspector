@@ -34,7 +34,7 @@ namespace NodeInspector.Editor {
             scriptableObject.EditorWindowRect = 
                 GUILayout.Window(scriptableObject.GetInstanceID(), 
                     scriptableObject.EditorWindowRect, DoWindow, 
-                    "scriptableObject.name");   
+                    scriptableObject.name);   
             return WindowRect;
         }
 

@@ -18,10 +18,10 @@ namespace NodeInspector.Editor{
 			foreach (NodeGUI node in allNodes) {
 				foreach (JointData jointData in node.Joints) {
 					if (jointData.JointType == JointType.Incognito_In) {
-						ConnectionGUI connectionData = new ConnectionGUI ();
+                        ConnectionGUI connectionData = ConnectionGUI.GetInstance(GUIUtility.GetControlID(FocusType.Passive));
 						connectionData.InputJoint = jointData;
                         if (incognitoInConnections.ContainsKey(jointData.ObjectRefferenceValue)){
-                            Debug.Log("we already have this value "+ jointData.ObjectRefferenceValue);
+                            Debug.Log("we already have this value "+ jointData.ObjectRefferenceValue);                        
                         }
                         incognitoInConnections.Add (jointData.ObjectRefferenceValue, connectionData);
 					} 
