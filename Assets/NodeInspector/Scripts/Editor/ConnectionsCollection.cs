@@ -18,15 +18,18 @@ namespace NodeInspector.Editor{
 			foreach (NodeGUI node in allNodes) {
 				foreach (JointData jointData in node.Joints) {
 					if (jointData.JointType == JointType.Incognito_In) {
-                        ConnectionGUI connectionData = ConnectionGUI.GetInstance(GUIUtility.GetControlID(FocusType.Passive));
-						connectionData.InputJoint = jointData;
-                        if (incognitoInConnections.ContainsKey(jointData.ObjectRefferenceValue)){
-                            Debug.Log("we already have this value "+ jointData.ObjectRefferenceValue);                        
+                        
+                        if (incognitoInConnections.ContainsKey(jointData.ObjectRefferenceValue))
+                        {
+                            Debug.Log("we already have this value " + jointData.ObjectRefferenceValue);
                         }
-                        incognitoInConnections.Add (jointData.ObjectRefferenceValue, connectionData);
+                        ConnectionGUI connectionData = GetNewConnectionGUI(jointData);
+                        incognitoInConnections.Add(jointData.ObjectRefferenceValue, connectionData);
 					} 
 				}
 			}
+
+
 
 
 			//connect them to fields		
@@ -37,13 +40,24 @@ namespace NodeInspector.Editor{
 							ConnectionGUI connectionData;
                             if (incognitoInConnections.ContainsKey(jointData.ObjectRefferenceValue)){
                                 connectionData = incognitoInConnections[jointData.ObjectRefferenceValue];
-								connectionData.OutputJoint = jointData;
-								allConnections.Add(connectionData);
+                                if (connectionData.OutputJoint != null){                                    
+                                    //need to clone this connection because one already connected to something
+                                    connectionData = GetNewConnectionGUI(connectionData.InputJoint);
+                                }
+                                connectionData.OutputJoint = jointData;
+                                allConnections.Add(connectionData);
 							} 
 						}						
 					}
 				}
 			}
-		}
+        }
+
+        ConnectionGUI GetNewConnectionGUI( JointData jointData){
+            ConnectionGUI connectionData = ConnectionGUI.GetInstance(GUIUtility.GetControlID(FocusType.Passive));
+            connectionData.InputJoint = jointData;
+            return connectionData;
+        }
+
 	}
 }

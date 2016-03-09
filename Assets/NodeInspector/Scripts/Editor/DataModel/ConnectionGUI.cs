@@ -4,7 +4,7 @@ using UnityEditor;
 
 namespace NodeInspector.Editor{	
 	public class ConnectionGUI{
-        const float BezierMinDistanceForSelection = 2.0f;
+        const float BezierMinDistanceForSelection = 3.0f;
 
         public int ControlID {get; private set;}
         public JointData InputJoint  { get; set;}
@@ -34,7 +34,7 @@ namespace NodeInspector.Editor{
                 case EventType.Repaint:
                     {                 
                         Focused = Focused && ControlID == GUIUtility.hotControl;
-                        float width = Focused ? 3.0f : 3.0f;
+                        float width = 2.0f;
                         Color color = Focused ? Color.black : Color.gray;
 
                         Handles.BeginGUI();
