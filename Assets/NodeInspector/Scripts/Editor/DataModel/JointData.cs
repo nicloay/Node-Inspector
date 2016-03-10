@@ -67,6 +67,53 @@ namespace NodeInspector.Editor{
             }
         }
 
+        public void OnGUI(NodeInspector parentWindow){
+            switch (Event.current.GetTypeForControl(ControlID)){
+                case EventType.Repaint:
+                    {
+                        GUI.Button(KnobButtonRect, KnobButtonCaption, KnobButtonStyle);
+                        if (GUIUtility.hotControl == ControlID){                            
+                            Debug.Log("wtf ??? ");
+                            Vector2 mousePosition = Event.current.mousePosition;
+                            Vector2 mouseNormal =mousePosition + (BezierSidePoint - mousePosition).normalized * 50.0f;
+                            Debug.LogFormat("{0} {1} {2} {3}",BezierSidePoint, mousePosition,
+                                BezierNormal, mouseNormal);
+                            Handles.BeginGUI();
+                            Handles.DrawBezier (BezierSidePoint, mousePosition,
+                                BezierNormal, mouseNormal, Color.gray, null, 3.0f);            
+                            Handles.EndGUI();
+                            parentWindow.Repaint();
+                        }
+                        break;
+                    }
+                case EventType.mouseDown:
+                    {
+                        if (KnobButtonRect.Contains(Event.current.mousePosition)){
+                            GUIUtility.hotControl = ControlID;
+                            Debug.Log("hot control set");
+                            Event.current.Use();
+                        }
+                        break;
+                    }
+                case EventType.mouseUp:
+                    {
+                        if (GUIUtility.hotControl == ControlID){
+                            GUIUtility.hotControl = 0;
+                            Debug.Log("hot control unset");
+                        }
+                        break;
+                    }                
+                case EventType.MouseDrag:                    
+                    {
+                       
+                        break;
+                    }
+            
+            }
+
+
+        }
+
 
         void SetupGUIVariables()
         {

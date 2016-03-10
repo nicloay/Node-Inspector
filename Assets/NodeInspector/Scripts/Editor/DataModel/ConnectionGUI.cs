@@ -47,7 +47,6 @@ namespace NodeInspector.Editor{
                     {
                         if (GUIUtility.hotControl == ControlID 
                             && (Event.current.keyCode == KeyCode.Delete || Event.current.keyCode == KeyCode.Backspace)){
-                            Debug.Log("deleting !!!");
                             InputJoint.ClearJointLink();
                             OutputJoint.ClearJointLink();
                             GUIUtility.hotControl = 0;

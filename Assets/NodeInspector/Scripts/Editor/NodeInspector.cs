@@ -46,11 +46,11 @@ namespace NodeInspector.Editor{
 
         }
 
-        static void RenderButtons(NodeGUI node, Rect WindowRect)
+        void RenderButtons(NodeGUI node, Rect WindowRect)
         {
 			foreach (JointData joint in node.Joints)
-            {                               
-                GUI.Button(joint.KnobButtonRect, joint.KnobButtonCaption, joint.KnobButtonStyle);
+            {        
+                joint.OnGUI(this);
             }
         }
 
@@ -133,18 +133,7 @@ namespace NodeInspector.Editor{
             currentGraphId = EditorGUILayout.Popup(currentGraphId, nodes.Keys.ToArray(), EditorStyles.toolbarPopup);
         }
 
-        void HandleKeyDown()
-        {
-            if (Event.current.isMouse && Event.current.button == 0){
-                
-            }
-
-            if (Event.current.keyCode == KeyCode.Delete || Event.current.keyCode == KeyCode.Backspace){
-                
-                //Debug.LogFormat("delete pressed object = {0}", GUIUtility.GetControlID(FocusType.Passive)); This is really wtf???
-            }
-        }
-
+       
         [MenuItem("Test/GUIWindow")]
         static void Init(){
             
