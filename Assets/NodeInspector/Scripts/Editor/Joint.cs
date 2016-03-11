@@ -22,18 +22,23 @@ namespace NodeInspector.Editor{
         public int ControlID {get; private set;}
 
         public bool MouseDrag {get; private set;}
+        public Node ParentNode {get; private set;}
 
 
-        public static Joint GetInstance(SerializedProperty serializedProperty, Rect fieldInternalRect, JointType jointType, Vector2 parentWindowGlobalPosition){
+        public static Joint GetInstance(SerializedProperty serializedProperty, Rect fieldInternalRect
+            , JointType jointType, Vector2 parentWindowGlobalPosition, Node parentNode){
             Joint result = GetInstance(fieldInternalRect, jointType, parentWindowGlobalPosition);
             result.SerializedProperty = serializedProperty ;
             result.ObjectRefferenceValue = serializedProperty.objectReferenceValue;
+            result.ParentNode = parentNode;
             return result;
         }
 
-        public static Joint GetInstance(Object scriptableObject, Rect fieldInternalRect, JointType jointType, Vector2 parentWindowGlobalPosition){
+        public static Joint GetInstance(Object scriptableObject, Rect fieldInternalRect
+            , JointType jointType, Vector2 parentWindowGlobalPosition, Node parentNode){
             Joint result = GetInstance(fieldInternalRect, jointType,parentWindowGlobalPosition);
             result.ObjectRefferenceValue = scriptableObject;
+            result.ParentNode = parentNode;
             return result;
         }
 
@@ -73,7 +78,17 @@ namespace NodeInspector.Editor{
             switch (Event.current.GetTypeForControl(ControlID)){
                 case EventType.Repaint:
                     {
+                        
+                        if (ParentNode.ParentWindow.JointHighlight.JointType != JointType.Nan 
+                            && ParentNode.ParentWindow.JointHighlight.JointType == JointType){
+                            //blink if destination
+                            Color color = GUI.color;
+                            color.a = 0.3f + Mathf.PingPong((float)EditorApplication.timeSinceStartup * 2.0f, 0.7f);
+                            GUI.color = color;
+                        }
+
                         GUI.Button(KnobButtonRect, KnobButtonCaption, KnobButtonStyle);                       
+                        GUI.color = Color.white;
                         break;
                     }
                 case EventType.mouseDown:
@@ -94,7 +109,9 @@ namespace NodeInspector.Editor{
                         break;
                     }                
                 case EventType.MouseDrag:                    
-                    {                       
+                    {         
+                        
+
                         break;
                     }           
             }

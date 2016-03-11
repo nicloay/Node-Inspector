@@ -8,10 +8,21 @@ using System.Collections.Generic;
 using System;
 
 namespace NodeInspector.Editor{    
+    public class JointHighlightHolder{
+        public JointType JointType;
+    }
+
+
     public class NodeInspector : EditorWindow {
-        
+        public int ControlID{get; private set;}
+        public JointHighlightHolder JointHighlight;
+
         Rect defaultWindowRect = new Rect(100,100,200,200);
         void OnGUI(){
+            
+            JointHighlight = (JointHighlightHolder) GUIUtility.GetStateObject(typeof(JointHighlightHolder)
+                ,GUIUtility.GetControlID(FocusType.Passive));
+            Debug.Log("2 == > highlight type = "+ JointHighlight.JointType);
             if (!CheckSelectedObject()){
                 return;
             }
@@ -25,7 +36,7 @@ namespace NodeInspector.Editor{
             Rect buttonRect = new Rect();
 
             foreach(var graphData in CurrentGraph.ItemList){
-                Node nodeGUI = Node.GetInstance((ScriptableObjectNode)graphData);               
+                Node nodeGUI = Node.GetInstance((ScriptableObjectNode)graphData, this);               
                 nodeGUIS.Add(nodeGUI);               
             }
 
@@ -34,16 +45,13 @@ namespace NodeInspector.Editor{
                 node.OnGUI();
             }
             EndWindows();
-            
-            foreach (Node node in nodeGUIS){
-                RenderButtons(node, node.WindowRect);
-            }
+
             ConnectionsCollection cCollection = new ConnectionsCollection (nodeGUIS, this);
 
             foreach (Connection connectionGUI in cCollection.allConnections) {
                 connectionGUI.OnGUI();
 			}
-
+            Debug.Log("highlight type = "+ JointHighlight.JointType);
         }
 
         void RenderButtons(Node node, Rect WindowRect)

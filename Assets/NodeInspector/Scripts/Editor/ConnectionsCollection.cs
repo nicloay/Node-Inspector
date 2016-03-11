@@ -76,9 +76,7 @@ namespace NodeInspector.Editor{
 				}
 			}
 
-            if (lastDraggedConnection != null){
-                parentWindow.Repaint();
-            } else {
+            if (lastDraggedConnection == null){                
                 //lets check maybe we clicked some joints and want to connect it to something
                 foreach (Node node in allNodes) {
                     foreach (Joint joint in node.Joints) {
@@ -99,11 +97,29 @@ namespace NodeInspector.Editor{
                                     break;
                             }
                             allConnections.Add(connection);
-                            parentWindow.Repaint();
+                            lastDraggedConnection = connection;
                         } 
                     }
                 }
+            }
 
+
+            if (lastDraggedConnection != null){
+                Debug.Log("im here");
+                switch (lastDraggedConnection.ConnectionType){
+                    case ConnectionRenderType.MouseToInputNode:                        
+                        parentWindow.JointHighlight.JointType = JointType.ManyToOne_Incognito_OUT;
+                        break;
+                    case ConnectionRenderType.OutputNodeToMouse:
+                        parentWindow.JointHighlight.JointType = JointType.Incognito_In;
+                        break;
+                    default:
+                        Debug.LogError("FIXME: must not be here");
+                        break;
+                }
+                parentWindow.Repaint();
+            } else {
+                parentWindow.JointHighlight.JointType = JointType.Nan;
             }
         }
 
