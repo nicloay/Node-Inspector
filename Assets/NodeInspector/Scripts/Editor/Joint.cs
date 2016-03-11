@@ -3,7 +3,7 @@ using UnityEditor;
 
 
 namespace NodeInspector.Editor{
-    public class JointData {
+    public class Joint {
 
 
         const float BezierNormalMagnitude = 30.0f;
@@ -21,22 +21,22 @@ namespace NodeInspector.Editor{
 
         public int ControlID {get; private set;}
 
-        public static JointData GetInstance(SerializedProperty serializedProperty, Rect fieldInternalRect, JointType jointType, Vector2 parentWindowGlobalPosition){
-            JointData result = GetInstance(fieldInternalRect, jointType, parentWindowGlobalPosition);
+        public static Joint GetInstance(SerializedProperty serializedProperty, Rect fieldInternalRect, JointType jointType, Vector2 parentWindowGlobalPosition){
+            Joint result = GetInstance(fieldInternalRect, jointType, parentWindowGlobalPosition);
             result.SerializedProperty = serializedProperty ;
             result.ObjectRefferenceValue = serializedProperty.objectReferenceValue;
             return result;
         }
 
-        public static JointData GetInstance(Object scriptableObject, Rect fieldInternalRect, JointType jointType, Vector2 parentWindowGlobalPosition){
-            JointData result = GetInstance(fieldInternalRect, jointType,parentWindowGlobalPosition);
+        public static Joint GetInstance(Object scriptableObject, Rect fieldInternalRect, JointType jointType, Vector2 parentWindowGlobalPosition){
+            Joint result = GetInstance(fieldInternalRect, jointType,parentWindowGlobalPosition);
             result.ObjectRefferenceValue = scriptableObject;
             return result;
         }
 
-        static JointData GetInstance( Rect fieldInternalRect, JointType jointType, Vector2 parentWindowGlobalPosition){
+        static Joint GetInstance( Rect fieldInternalRect, JointType jointType, Vector2 parentWindowGlobalPosition){
             int controlID = GUIUtility.GetControlID(FocusType.Passive);
-            JointData result = (JointData)GUIUtility.GetStateObject(typeof(JointData), controlID);
+            Joint result = (Joint)GUIUtility.GetStateObject(typeof(Joint), controlID);
             result.ControlID = controlID;
             if (Event.current.type == EventType.repaint){
                 result.FieldInternalRect = fieldInternalRect;                              
@@ -113,21 +113,21 @@ namespace NodeInspector.Editor{
         {
             switch(JointType){
                 case JointType.Incognito_In:
-                    KnobButtonRect = new Rect(NodeGUI.KnobSize * 2,  0, NodeGUI.KnobSize, NodeGUI.KnobSize);
-                    BezierSidePoint = parentWindowGlobalPosition + new Vector2(NodeGUI.KnobSize*2.5f, 0.0f);
+                    KnobButtonRect = new Rect(Node.KnobSize * 2,  0, Node.KnobSize, Node.KnobSize);
+                    BezierSidePoint = parentWindowGlobalPosition + new Vector2(Node.KnobSize*2.5f, 0.0f);
                     BezierNormal = BezierSidePoint + Vector2.down * BezierNormalMagnitude;
                     break;
                 case JointType.ManyToMany_IN:
                 case JointType.ManyToOne_IN:
                 case JointType.OneToMany_IN:
                 case JointType.OneToOne_IN:
-                    KnobButtonRect = new Rect(0, FieldInternalRect.y, NodeGUI.KnobSize, NodeGUI.KnobSize);
-                    BezierSidePoint = parentWindowGlobalPosition + KnobButtonRect.position + new Vector2(0.0f, NodeGUI.KnobSize*0.5f);
+                    KnobButtonRect = new Rect(0, FieldInternalRect.y, Node.KnobSize, Node.KnobSize);
+                    BezierSidePoint = parentWindowGlobalPosition + KnobButtonRect.position + new Vector2(0.0f, Node.KnobSize*0.5f);
                     BezierNormal = BezierSidePoint + Vector2.left * BezierNormalMagnitude;
                     break;
                 default:
-                    KnobButtonRect = new Rect( FieldInternalRect.x + FieldInternalRect.width + NodeGUI.OriginalRightPatdding, FieldInternalRect.y, NodeGUI.KnobSize, NodeGUI.KnobSize);
-                    BezierSidePoint = parentWindowGlobalPosition + KnobButtonRect.position+ new Vector2(NodeGUI.KnobSize, NodeGUI.KnobSize*0.5f);
+                    KnobButtonRect = new Rect( FieldInternalRect.x + FieldInternalRect.width + Node.OriginalRightPatdding, FieldInternalRect.y, Node.KnobSize, Node.KnobSize);
+                    BezierSidePoint = parentWindowGlobalPosition + KnobButtonRect.position+ new Vector2(Node.KnobSize, Node.KnobSize*0.5f);
                     BezierNormal = BezierSidePoint + Vector2.right * BezierNormalMagnitude;
                     break;
             }

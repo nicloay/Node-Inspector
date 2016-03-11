@@ -20,22 +20,22 @@ namespace NodeInspector.Editor{
                 Event.current.Use();
             }
 
-            List<NodeGUI> nodeGUIS  = new List<NodeGUI>();
+            List<Node> nodeGUIS  = new List<Node>();
             OnGUIToolBar();
             Rect buttonRect = new Rect();
 
             foreach(var graphData in CurrentGraph.ItemList){
-                NodeGUI nodeGUI = NodeGUI.GetInstance((ScriptableObjectNode)graphData);               
+                Node nodeGUI = Node.GetInstance((ScriptableObjectNode)graphData);               
                 nodeGUIS.Add(nodeGUI);               
             }
 
             BeginWindows();
-            foreach (NodeGUI node in nodeGUIS){
+            foreach (Node node in nodeGUIS){
                 node.OnGUI();
             }
             EndWindows();
             
-            foreach (NodeGUI node in nodeGUIS){
+            foreach (Node node in nodeGUIS){
                 RenderButtons(node, node.WindowRect);
             }
             ConnectionsCollection cCollection = new ConnectionsCollection (nodeGUIS);
@@ -46,9 +46,9 @@ namespace NodeInspector.Editor{
 
         }
 
-        void RenderButtons(NodeGUI node, Rect WindowRect)
+        void RenderButtons(Node node, Rect WindowRect)
         {
-			foreach (JointData joint in node.Joints)
+			foreach (Joint joint in node.Joints)
             {        
                 //joint.OnGUI(this);
             }

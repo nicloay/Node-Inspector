@@ -6,11 +6,11 @@ using NodeInspector;
 using System;
 
 namespace NodeInspector.Editor {
-    public class NodeGUI {
+    public class Node {
         public int ControlID {get; private set;}
         ScriptableObjectNode scriptableObject;
         SerializedObject serializedObject;
-        public List<JointData> Joints;
+        public List<Joint> Joints;
         Rect windowRect = new Rect(100,100,200,200);
 
         public const int KnobSize = 15;
@@ -39,14 +39,14 @@ namespace NodeInspector.Editor {
             }
         }
 
-        public static NodeGUI GetInstance(ScriptableObjectNode scriptableObjectNode){
+        public static Node GetInstance(ScriptableObjectNode scriptableObjectNode){
             int controlID = GUIUtility.GetControlID(FocusType.Passive);
-            NodeGUI result = (NodeGUI) GUIUtility.GetStateObject(typeof(NodeGUI), controlID);
+            Node result = (Node) GUIUtility.GetStateObject(typeof(Node), controlID);
             result.ControlID = controlID;
             if (result.scriptableObject != scriptableObjectNode){
                 result.scriptableObject = scriptableObjectNode;
                 result.serializedObject = new SerializedObject(scriptableObjectNode);
-                result.Joints = new List<JointData>();
+                result.Joints = new List<Joint>();
             }
             return result;
         }
@@ -61,12 +61,7 @@ namespace NodeInspector.Editor {
         }
 
         void DoWindow(int id)
-        {          
-            if (Event.current.type == EventType.Layout){
-                Joints.Clear();
-            }     
-
-
+        {   
             EditorGUI.BeginChangeCheck();
             serializedObject.Update();
             SerializedProperty iterator = serializedObject.GetIterator();
@@ -110,8 +105,8 @@ namespace NodeInspector.Editor {
 		{
 			JointAttribute joint = (JointAttribute)Attribute.GetCustomAttribute (scriptableObject.GetType (), typeof(JointAttribute));
 			if (joint != null) {
-                JointData jData = JointData.GetInstance(scriptableObject, windowRect, JointType.Incognito_In, scriptableObject.EditorWindowRect.position);
-                if (!Joints.Contains(jData))
+                Joint jData = Joint.GetInstance(scriptableObject, windowRect, JointType.Incognito_In, scriptableObject.EditorWindowRect.position);
+                if (!Joints.Contains(jData) && Event.current.type == EventType.Repaint)
                 {
                     Joints.Add(jData);
                 }
@@ -123,8 +118,8 @@ namespace NodeInspector.Editor {
         void MakeKnob(SerializedProperty serializedProperty, Rect lastRect, JointType jointType)
         {
             serializedProperty = serializedProperty.serializedObject.FindProperty(serializedProperty.propertyPath);
-            JointData jData = JointData.GetInstance(serializedProperty, lastRect, jointType, scriptableObject.EditorWindowRect.position);
-            if (!Joints.Contains(jData))
+            Joint jData = Joint.GetInstance(serializedProperty, lastRect, jointType, scriptableObject.EditorWindowRect.position);
+            if (!Joints.Contains(jData) && Event.current.type == EventType.Repaint)
             {
                 Joints.Add(jData);
             }

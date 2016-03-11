@@ -57,8 +57,5 @@ namespace NodeInspector.Editor{
             }
             return false;
         }
-
-
-
     }
 }

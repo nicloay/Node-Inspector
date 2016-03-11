@@ -7,8 +7,8 @@ namespace NodeInspector.Editor{
         const float BezierMinDistanceForSelection = 3.0f;
 
         public int ControlID {get; private set;}
-        public JointData InputJoint  { get; set;}
-		public JointData OutputJoint { get; set;}
+        public Joint InputJoint  { get; set;}
+		public Joint OutputJoint { get; set;}
         public bool Focused           {get; private set;}
 
         public static ConnectionGUI GetInstance(int ControlID){            

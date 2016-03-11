@@ -6,7 +6,7 @@ namespace NodeInspector.Editor{
 	public class ConnectionsCollection {
 		public List<ConnectionGUI> allConnections;
 
-        public ConnectionsCollection(List<NodeGUI> allNodes){
+        public ConnectionsCollection(List<Node> allNodes){
 			allConnections = new List<ConnectionGUI> ();
 
 
@@ -15,13 +15,13 @@ namespace NodeInspector.Editor{
 
 
 			//collect all incognito inputconnections
-			foreach (NodeGUI node in allNodes) {
-				foreach (JointData jointData in node.Joints) {
+			foreach (Node node in allNodes) {
+				foreach (Joint jointData in node.Joints) {
 					if (jointData.JointType == JointType.Incognito_In) {
                         
                         if (incognitoInConnections.ContainsKey(jointData.ObjectRefferenceValue))
                         {
-                            Debug.Log("we already have this value " + jointData.ObjectRefferenceValue);
+                            Debug.LogError("FIXME: we already have this value " + jointData.ObjectRefferenceValue);
                         } else {                            
                             ConnectionGUI connectionData = GetNewConnectionGUI(jointData);
                             incognitoInConnections.Add(jointData.ObjectRefferenceValue, connectionData);
@@ -34,8 +34,8 @@ namespace NodeInspector.Editor{
 
 
 			//connect them to fields		
-			foreach (NodeGUI node in allNodes) {
-				foreach (JointData jointData in node.Joints) {
+			foreach (Node node in allNodes) {
+				foreach (Joint jointData in node.Joints) {
 					if (jointData.JointType == JointType.OneToOne_Incognito_OUT || jointData.JointType == JointType.ManyToOne_Incognito_OUT) {
                         if (jointData.ObjectRefferenceValue != null){
 							ConnectionGUI connectionData;
@@ -54,7 +54,7 @@ namespace NodeInspector.Editor{
 			}
         }
 
-        ConnectionGUI GetNewConnectionGUI( JointData jointData){
+        ConnectionGUI GetNewConnectionGUI( Joint jointData){
             ConnectionGUI connectionData = ConnectionGUI.GetInstance(GUIUtility.GetControlID(FocusType.Passive));
             connectionData.InputJoint = jointData;
             return connectionData;
