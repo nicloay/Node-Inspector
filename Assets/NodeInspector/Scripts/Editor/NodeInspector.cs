@@ -25,7 +25,7 @@ namespace NodeInspector.Editor{
             Rect buttonRect = new Rect();
 
             foreach(var graphData in CurrentGraph.ItemList){
-                NodeGUI nodeGUI = NodeGUI.GetInstance(GUIUtility.GetControlID(FocusType.Passive), (ScriptableObjectNode)graphData);               
+                NodeGUI nodeGUI = NodeGUI.GetInstance((ScriptableObjectNode)graphData);               
                 nodeGUIS.Add(nodeGUI);               
             }
 
@@ -50,7 +50,7 @@ namespace NodeInspector.Editor{
         {
 			foreach (JointData joint in node.Joints)
             {        
-                joint.OnGUI(this);
+                //joint.OnGUI(this);
             }
         }
 

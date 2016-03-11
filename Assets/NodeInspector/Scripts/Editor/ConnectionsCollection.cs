@@ -22,9 +22,10 @@ namespace NodeInspector.Editor{
                         if (incognitoInConnections.ContainsKey(jointData.ObjectRefferenceValue))
                         {
                             Debug.Log("we already have this value " + jointData.ObjectRefferenceValue);
+                        } else {                            
+                            ConnectionGUI connectionData = GetNewConnectionGUI(jointData);
+                            incognitoInConnections.Add(jointData.ObjectRefferenceValue, connectionData);
                         }
-                        ConnectionGUI connectionData = GetNewConnectionGUI(jointData);
-                        incognitoInConnections.Add(jointData.ObjectRefferenceValue, connectionData);
 					} 
 				}
 			}

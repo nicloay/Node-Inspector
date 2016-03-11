@@ -12,15 +12,37 @@ namespace NodeInspector.Editor {
         SerializedObject serializedObject;
         public List<JointData> Joints;
         Rect windowRect = new Rect(100,100,200,200);
-            
+
+        public const int KnobSize = 15;
+        public static int OriginalRightPatdding {get; private set;}
+        static GUIStyle _windowStyle;
+        static GUIStyle WindowStyle{
+            get{
+                if (_windowStyle == null){
+                    _windowStyle = new GUIStyle(GUI.skin.window);
+                    _windowStyle.overflow.left  -= KnobSize;
+                    _windowStyle.overflow.right -= KnobSize;
+                    _windowStyle.overflow.top   -= KnobSize;
+                    OriginalRightPatdding = _windowStyle.padding.right;
+                    _windowStyle.padding.left  += KnobSize;
+                    _windowStyle.padding.right += KnobSize;
+                    _windowStyle.padding.top   += KnobSize;
+                }
+                return _windowStyle;
+            }
+        }
+
+
         public Rect WindowRect{
             get{
                 return scriptableObject.EditorWindowRect;
             }
         }
 
-        public static NodeGUI GetInstance(int ControlID, ScriptableObjectNode scriptableObjectNode){
-            NodeGUI result = (NodeGUI) GUIUtility.GetStateObject(typeof(NodeGUI), ControlID);
+        public static NodeGUI GetInstance(ScriptableObjectNode scriptableObjectNode){
+            int controlID = GUIUtility.GetControlID(FocusType.Passive);
+            NodeGUI result = (NodeGUI) GUIUtility.GetStateObject(typeof(NodeGUI), controlID);
+            result.ControlID = controlID;
             if (result.scriptableObject != scriptableObjectNode){
                 result.scriptableObject = scriptableObjectNode;
                 result.serializedObject = new SerializedObject(scriptableObjectNode);
@@ -34,25 +56,20 @@ namespace NodeInspector.Editor {
             scriptableObject.EditorWindowRect = 
                 GUILayout.Window(scriptableObject.GetInstanceID(), 
                     scriptableObject.EditorWindowRect, DoWindow, 
-                    scriptableObject.name);   
+                    scriptableObject.name, WindowStyle);   
             return WindowRect;
         }
 
         void DoWindow(int id)
         {          
-            
-            DoDrawDefaultInspector(serializedObject);
-			AddJointIfAcceptIncognito ();
-            GUI.DragWindow();
-        }
+            if (Event.current.type == EventType.Layout){
+                Joints.Clear();
+            }     
 
 
-       
-        bool DoDrawDefaultInspector(SerializedObject obj)
-        {
             EditorGUI.BeginChangeCheck();
-            obj.Update();
-            SerializedProperty iterator = obj.GetIterator();
+            serializedObject.Update();
+            SerializedProperty iterator = serializedObject.GetIterator();
             bool fillJointCollection = (Joints.Count == 0);
             for (bool enterChildren = true; iterator.NextVisible(enterChildren); enterChildren = false){
                 if (iterator.propertyType != SerializedPropertyType.ObjectReference || !(iterator.objectReferenceValue is MonoScript)){                    
@@ -64,13 +81,17 @@ namespace NodeInspector.Editor {
                         EditorGUILayout.LabelField(iterator.name);
                                                  
                         Rect lastRect = GUILayoutUtility.GetLastRect();                            
-                        AddJointDataOrUpdate(iterator, lastRect, jointType);
+                        MakeKnob(iterator, lastRect, jointType);
                     }
                 }                    
             }
-            obj.ApplyModifiedProperties();
-            return EditorGUI.EndChangeCheck();
+            serializedObject.ApplyModifiedProperties();
+            EditorGUI.EndChangeCheck();
+            AddJointIfAcceptIncognito ();
+            GUI.DragWindow();
         }
+
+
 
         JointType GetPropertyJointType(SerializedProperty property){
             if (property.propertyType != SerializedPropertyType.ObjectReference){
@@ -89,24 +110,25 @@ namespace NodeInspector.Editor {
 		{
 			JointAttribute joint = (JointAttribute)Attribute.GetCustomAttribute (scriptableObject.GetType (), typeof(JointAttribute));
 			if (joint != null) {
-                JointData jData = JointData.GetInstance(GUIUtility.GetControlID(FocusType.Passive)
-                    , scriptableObject, windowRect, scriptableObject.EditorWindowRect, JointType.Incognito_In);
+                JointData jData = JointData.GetInstance(scriptableObject, windowRect, JointType.Incognito_In);
                 if (!Joints.Contains(jData))
                 {
                     Joints.Add(jData);
                 }
+                jData.OnGUI();
 			}
 		}
 
                
-        void AddJointDataOrUpdate(SerializedProperty serializedProperty, Rect lastRect, JointType jointType)
+        void MakeKnob(SerializedProperty serializedProperty, Rect lastRect, JointType jointType)
         {
             serializedProperty = serializedProperty.serializedObject.FindProperty(serializedProperty.propertyPath);
-            JointData jData = JointData.GetInstance(GUIUtility.GetControlID(FocusType.Passive), serializedProperty, lastRect, scriptableObject.EditorWindowRect, jointType);
+            JointData jData = JointData.GetInstance(serializedProperty, lastRect, jointType);
             if (!Joints.Contains(jData))
             {
                 Joints.Add(jData);
             }
+            jData.OnGUI();
         }
     }
 }
