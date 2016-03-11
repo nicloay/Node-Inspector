@@ -85,6 +85,9 @@ namespace NodeInspector.Editor {
                     }
                 }                    
             }
+            foreach(Joint joint in Joints){
+                joint.OnGUI();
+            }
 
             serializedObject.ApplyModifiedProperties();
             EditorGUI.EndChangeCheck();
@@ -115,7 +118,6 @@ namespace NodeInspector.Editor {
                 {
                     Joints.Add(jData);
                 }
-                jData.OnGUI();
 			}
 		}
 
@@ -128,7 +130,6 @@ namespace NodeInspector.Editor {
             {
                 Joints.Add(jData);
             }
-            jData.OnGUI();
         }
     }
 }
