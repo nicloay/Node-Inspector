@@ -32,7 +32,6 @@ namespace NodeInspector.Editor {
             }
         }
 
-
         public Rect WindowRect{
             get{
                 return scriptableObject.EditorWindowRect;
@@ -64,8 +63,8 @@ namespace NodeInspector.Editor {
         {   
             EditorGUI.BeginChangeCheck();
             serializedObject.Update();
+            AddJointIfAcceptIncognito ();
             SerializedProperty iterator = serializedObject.GetIterator();
-            bool fillJointCollection = (Joints.Count == 0);
             for (bool enterChildren = true; iterator.NextVisible(enterChildren); enterChildren = false){
                 if (iterator.propertyType != SerializedPropertyType.ObjectReference || !(iterator.objectReferenceValue is MonoScript)){                    
                     //Check if it's node here
@@ -80,10 +79,10 @@ namespace NodeInspector.Editor {
                     }
                 }                    
             }
+
             serializedObject.ApplyModifiedProperties();
             EditorGUI.EndChangeCheck();
-            AddJointIfAcceptIncognito ();
-            GUI.DragWindow();
+            GUI.DragWindow(new Rect(KnobSize, KnobSize, scriptableObject.EditorWindowRect.width - KnobSize*2, GUI.skin.window.border.top));
         }
 
 

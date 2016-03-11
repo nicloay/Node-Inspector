@@ -20,9 +20,10 @@ namespace NodeInspector.Editor{
         public ConnectionRenderType ConnectionType {get; set;}
 
 
-        public static Connection GetInstance(int ControlID){            
-            Connection result = (Connection)GUIUtility.GetStateObject(typeof(Connection), ControlID);
-            result.ControlID = ControlID;
+        public static Connection GetInstance(){            
+            int controlID = GUIUtility.GetControlID(FocusType.Passive);
+            Connection result = (Connection)GUIUtility.GetStateObject(typeof(Connection), controlID);
+            result.ControlID = controlID;
             return result;
         }
 
@@ -63,6 +64,7 @@ namespace NodeInspector.Editor{
                                 }
                             case ConnectionRenderType.OutputNodeToMouse:
                                 {
+                                    Debug.Log("im here");
                                     Handles.DrawBezier (OutputJoint.BezierSidePoint, Event.current.mousePosition,
                                         OutputJoint.BezierNormal, InputJoint.BezierNormal, color, null, width);                                                
                                     break;

@@ -30,32 +30,40 @@ namespace NodeInspector.Editor{
 				}
 			}
 
-            bool HandleMouseDragNDrop = true;
+            bool handleJointDragging = true;
+            Connection lastDraggedConnection = null;
 			//connect them to fields		
 			foreach (Node node in allNodes) {
 				foreach (Joint jointData in node.Joints) {
 					if (jointData.JointType == JointType.OneToOne_Incognito_OUT || jointData.JointType == JointType.ManyToOne_Incognito_OUT) {
                         if (jointData.ObjectRefferenceValue != null){
-							Connection connectionData;
+                            Connection connection;
                             if (incognitoInConnections.ContainsKey(jointData.ObjectRefferenceValue)){
-                                connectionData = incognitoInConnections[jointData.ObjectRefferenceValue];
-                                if (connectionData.OutputJoint != null){                                    
+                                connection = incognitoInConnections[jointData.ObjectRefferenceValue];
+                                if (connection.OutputJoint != null){                                    
                                     //need to clone this connection because one already connected to something
-                                    connectionData = GetNewConnectionGUI(connectionData.InputJoint);
+                                    connection = GetNewConnectionGUI(connection.InputJoint);
                                 }
-                                connectionData.OutputJoint = jointData;
-                                allConnections.Add(connectionData);
-                                if (HandleMouseDragNDrop){
-                                    if (connectionData.InputJoint.MouseDrag){
-                                        connectionData.ConnectionType = ConnectionRenderType.OutputNodeToMouse;
-                                        HandleMouseDragNDrop = false;
-                                        parentWindow.Repaint();
-                                    } else if (connectionData.OutputJoint.MouseDrag){
-                                        connectionData.ConnectionType = ConnectionRenderType.MouseToInputNode;
-                                        HandleMouseDragNDrop = false;
-                                        parentWindow.Repaint();
+                                connection.OutputJoint = jointData;
+                                allConnections.Add(connection);
+
+                                if (handleJointDragging){                                    
+                                    if (connection.InputJoint.MouseDrag || connection.OutputJoint.MouseDrag){                                                                               
+
+                                        if (connection.Focused || connection.ConnectionType != ConnectionRenderType.OutputToInput){                                            
+                                            handleJointDragging = false;
+                                            //it's possible that several line use this knob and we will drag last one or selected if some of lines in focus
+                                        }
+
+                                        connection.ConnectionType = connection.InputJoint.MouseDrag 
+                                            ? ConnectionRenderType.OutputNodeToMouse : ConnectionRenderType.MouseToInputNode;
+                                        if (lastDraggedConnection != null){
+                                            lastDraggedConnection.ConnectionType = ConnectionRenderType.OutputToInput;
+                                        }
+                                        lastDraggedConnection = connection;
+
                                     } else {
-                                        connectionData.ConnectionType = ConnectionRenderType.OutputToInput;
+                                        connection.ConnectionType = ConnectionRenderType.OutputToInput;
                                     }
                                 }
 							} 
@@ -63,10 +71,14 @@ namespace NodeInspector.Editor{
 					}
 				}
 			}
+
+            if (lastDraggedConnection != null){
+                parentWindow.Repaint();
+            }
         }
 
         Connection GetNewConnectionGUI( Joint jointData){
-            Connection connectionData = Connection.GetInstance(GUIUtility.GetControlID(FocusType.Passive));
+            Connection connectionData = Connection.GetInstance();
             connectionData.InputJoint = jointData;
             return connectionData;
         }
