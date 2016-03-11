@@ -53,20 +53,23 @@ namespace NodeInspector.Editor{
                             case ConnectionRenderType.OutputToInput:
                                 {
                                     Handles.DrawBezier (OutputJoint.BezierSidePoint, InputJoint.BezierSidePoint,
-                                        OutputJoint.BezierNormal, InputJoint.BezierNormal, color, null, width);                                                
+                                        OutputJoint.BezierNormal, InputJoint.BezierNormal, color, null, width);                                     
                                     break;
                                 }
                             case ConnectionRenderType.MouseToInputNode:
                                 {
-                                    Handles.DrawBezier (Event.current.mousePosition, InputJoint.BezierSidePoint,
-                                        OutputJoint.BezierNormal, InputJoint.BezierNormal, color, null, width);                                                
+                                    Vector2 srcPosition = Event.current.mousePosition;
+                                    Vector2 srcNormal = srcPosition + (InputJoint.BezierSidePoint - srcPosition).normalized * 50.0f;
+                                    Handles.DrawBezier (srcPosition, InputJoint.BezierSidePoint,
+                                        srcNormal, InputJoint.BezierNormal, color, null, width);                                                                                    
                                     break;
                                 }
                             case ConnectionRenderType.OutputNodeToMouse:
                                 {
-                                    Debug.Log("im here");
-                                    Handles.DrawBezier (OutputJoint.BezierSidePoint, Event.current.mousePosition,
-                                        OutputJoint.BezierNormal, InputJoint.BezierNormal, color, null, width);                                                
+                                    Vector2 dstPosition = Event.current.mousePosition;
+                                    Vector2 dstNormal = dstPosition + (OutputJoint.BezierSidePoint - dstPosition).normalized * 50.0f;
+                                    Handles.DrawBezier (OutputJoint.BezierSidePoint, dstPosition,
+                                        OutputJoint.BezierNormal, dstNormal, color, null, width);                                                
                                     break;
                                 }
                         }

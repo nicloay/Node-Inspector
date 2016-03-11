@@ -30,22 +30,26 @@ namespace NodeInspector.Editor{
 				}
 			}
 
+
+            Stack<Joint> UsedByLineJoints = new Stack<Joint>(); // all joints used by line would be store here
             bool handleJointDragging = true;
             Connection lastDraggedConnection = null;
 			//connect them to fields		
 			foreach (Node node in allNodes) {
-				foreach (Joint jointData in node.Joints) {
-					if (jointData.JointType == JointType.OneToOne_Incognito_OUT || jointData.JointType == JointType.ManyToOne_Incognito_OUT) {
-                        if (jointData.ObjectRefferenceValue != null){
+                foreach (Joint joint in node.Joints) {
+					if (joint.JointType == JointType.OneToOne_Incognito_OUT || joint.JointType == JointType.ManyToOne_Incognito_OUT) {
+                        if (joint.ObjectRefferenceValue != null){
                             Connection connection;
-                            if (incognitoInConnections.ContainsKey(jointData.ObjectRefferenceValue)){
-                                connection = incognitoInConnections[jointData.ObjectRefferenceValue];
+                            if (incognitoInConnections.ContainsKey(joint.ObjectRefferenceValue)){
+                                connection = incognitoInConnections[joint.ObjectRefferenceValue];
                                 if (connection.OutputJoint != null){                                    
                                     //need to clone this connection because one already connected to something
                                     connection = GetNewConnectionGUI(connection.InputJoint);
                                 }
-                                connection.OutputJoint = jointData;
+                                connection.OutputJoint = joint;
                                 allConnections.Add(connection);
+                                UsedByLineJoints.Push(connection.OutputJoint);
+                                UsedByLineJoints.Push(connection.InputJoint);
 
                                 if (handleJointDragging){                                    
                                     if (connection.InputJoint.MouseDrag || connection.OutputJoint.MouseDrag){                                                                               
@@ -74,6 +78,32 @@ namespace NodeInspector.Editor{
 
             if (lastDraggedConnection != null){
                 parentWindow.Repaint();
+            } else {
+                //lets check maybe we clicked some joints and want to connect it to something
+                foreach (Node node in allNodes) {
+                    foreach (Joint joint in node.Joints) {
+                        if (!UsedByLineJoints.Contains(joint) && joint.MouseDrag){
+                            //here is clicked node so lets create new connection with anonimouse target or source
+                            Connection connection = Connection.GetInstance();
+                            switch (joint.JointType){
+                                case JointType.Incognito_In:
+                                    connection.InputJoint = joint;
+                                    connection.ConnectionType = ConnectionRenderType.MouseToInputNode;
+                                    break;
+                                case JointType.OneToOne_Incognito_OUT:
+                                    connection.OutputJoint = joint;
+                                    connection.ConnectionType = ConnectionRenderType.OutputNodeToMouse;
+                                    break;
+                                default:
+                                    Debug.LogWarning("unsuported joint type"+ joint.JointType) ;
+                                    break;
+                            }
+                            allConnections.Add(connection);
+                            parentWindow.Repaint();
+                        } 
+                    }
+                }
+
             }
         }
 
