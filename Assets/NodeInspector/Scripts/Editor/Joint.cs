@@ -21,6 +21,9 @@ namespace NodeInspector.Editor{
 
         public int ControlID {get; private set;}
 
+        public bool MouseDrag {get; private set;}
+
+
         public static Joint GetInstance(SerializedProperty serializedProperty, Rect fieldInternalRect, JointType jointType, Vector2 parentWindowGlobalPosition){
             Joint result = GetInstance(fieldInternalRect, jointType, parentWindowGlobalPosition);
             result.SerializedProperty = serializedProperty ;
@@ -66,29 +69,18 @@ namespace NodeInspector.Editor{
             }
         }
 
-        public void OnGUI(/*NodeInspector parentWindow*/){
+        public void OnGUI(){
             switch (Event.current.GetTypeForControl(ControlID)){
                 case EventType.Repaint:
                     {
-                        GUI.Button(KnobButtonRect, KnobButtonCaption, KnobButtonStyle);
-                        if (GUIUtility.hotControl == ControlID){                            
-                            Debug.Log("wtf ??? ");
-                            Vector2 mousePosition = Event.current.mousePosition;
-                            Vector2 mouseNormal =mousePosition + (BezierSidePoint - mousePosition).normalized * 50.0f;
-                            Debug.LogFormat("{0} {1} {2} {3}",BezierSidePoint, mousePosition,
-                                BezierNormal, mouseNormal);
-                            Handles.BeginGUI();
-                            Handles.DrawBezier (BezierSidePoint, mousePosition,
-                                BezierNormal, mouseNormal, Color.gray, null, 3.0f);            
-                            Handles.EndGUI();
-                            //parentWindow.Repaint();
-                        }
+                        GUI.Button(KnobButtonRect, KnobButtonCaption, KnobButtonStyle);                       
                         break;
                     }
                 case EventType.mouseDown:
                     {
                         if (KnobButtonRect.Contains(Event.current.mousePosition)){
                             GUIUtility.hotControl = ControlID;
+                            MouseDrag = true;
                             Event.current.Use();
                         }
                         break;
@@ -96,13 +88,13 @@ namespace NodeInspector.Editor{
                 case EventType.mouseUp:
                     {
                         if (GUIUtility.hotControl == ControlID){
+                            MouseDrag = false;
                             GUIUtility.hotControl = 0;
                         }
                         break;
                     }                
                 case EventType.MouseDrag:                    
-                    {
-                       
+                    {                       
                         break;
                     }           
             }

@@ -38,9 +38,9 @@ namespace NodeInspector.Editor{
             foreach (Node node in nodeGUIS){
                 RenderButtons(node, node.WindowRect);
             }
-            ConnectionsCollection cCollection = new ConnectionsCollection (nodeGUIS);
+            ConnectionsCollection cCollection = new ConnectionsCollection (nodeGUIS, this);
 
-            foreach (ConnectionGUI connectionGUI in cCollection.allConnections) {
+            foreach (Connection connectionGUI in cCollection.allConnections) {
                 connectionGUI.OnGUI();
 			}
 
