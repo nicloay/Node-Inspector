@@ -21,20 +21,20 @@ namespace NodeInspector.Editor{
 
         public int ControlID {get; private set;}
 
-        public static JointData GetInstance(SerializedProperty serializedProperty, Rect fieldInternalRect, JointType jointType){
-            JointData result = GetInstance(fieldInternalRect, jointType);
+        public static JointData GetInstance(SerializedProperty serializedProperty, Rect fieldInternalRect, JointType jointType, Vector2 parentWindowGlobalPosition){
+            JointData result = GetInstance(fieldInternalRect, jointType, parentWindowGlobalPosition);
             result.SerializedProperty = serializedProperty ;
             result.ObjectRefferenceValue = serializedProperty.objectReferenceValue;
             return result;
         }
 
-        public static JointData GetInstance(Object scriptableObject, Rect fieldInternalRect, JointType jointType){
-            JointData result = GetInstance(fieldInternalRect, jointType);
+        public static JointData GetInstance(Object scriptableObject, Rect fieldInternalRect, JointType jointType, Vector2 parentWindowGlobalPosition){
+            JointData result = GetInstance(fieldInternalRect, jointType,parentWindowGlobalPosition);
             result.ObjectRefferenceValue = scriptableObject;
             return result;
         }
 
-        static JointData GetInstance( Rect fieldInternalRect, JointType jointType){
+        static JointData GetInstance( Rect fieldInternalRect, JointType jointType, Vector2 parentWindowGlobalPosition){
             int controlID = GUIUtility.GetControlID(FocusType.Passive);
             JointData result = (JointData)GUIUtility.GetStateObject(typeof(JointData), controlID);
             result.ControlID = controlID;
@@ -43,7 +43,7 @@ namespace NodeInspector.Editor{
             }
 
             result.JointType = jointType;
-            result.SetupGUIVariables();
+            result.SetupGUIVariables(parentWindowGlobalPosition);
             return result;
         }
 
@@ -109,12 +109,12 @@ namespace NodeInspector.Editor{
         }
 
 
-        void SetupGUIVariables()
+        void SetupGUIVariables(Vector2 parentWindowGlobalPosition)
         {
             switch(JointType){
                 case JointType.Incognito_In:
                     KnobButtonRect = new Rect(NodeGUI.KnobSize * 2,  0, NodeGUI.KnobSize, NodeGUI.KnobSize);
-                    BezierSidePoint = KnobButtonRect.position+ new Vector2(NodeGUI.KnobSize*0.5f, 0.0f);
+                    BezierSidePoint = parentWindowGlobalPosition + new Vector2(NodeGUI.KnobSize*2.5f, 0.0f);
                     BezierNormal = BezierSidePoint + Vector2.down * BezierNormalMagnitude;
                     break;
                 case JointType.ManyToMany_IN:
@@ -122,12 +122,12 @@ namespace NodeInspector.Editor{
                 case JointType.OneToMany_IN:
                 case JointType.OneToOne_IN:
                     KnobButtonRect = new Rect(0, FieldInternalRect.y, NodeGUI.KnobSize, NodeGUI.KnobSize);
-                    BezierSidePoint = KnobButtonRect.position+ new Vector2(0.0f, NodeGUI.KnobSize*0.5f);
+                    BezierSidePoint = parentWindowGlobalPosition + KnobButtonRect.position + new Vector2(0.0f, NodeGUI.KnobSize*0.5f);
                     BezierNormal = BezierSidePoint + Vector2.left * BezierNormalMagnitude;
                     break;
                 default:
                     KnobButtonRect = new Rect( FieldInternalRect.x + FieldInternalRect.width + NodeGUI.OriginalRightPatdding, FieldInternalRect.y, NodeGUI.KnobSize, NodeGUI.KnobSize);
-                    BezierSidePoint = KnobButtonRect.position+ new Vector2(NodeGUI.KnobSize, NodeGUI.KnobSize*0.5f);
+                    BezierSidePoint = parentWindowGlobalPosition + KnobButtonRect.position+ new Vector2(NodeGUI.KnobSize, NodeGUI.KnobSize*0.5f);
                     BezierNormal = BezierSidePoint + Vector2.right * BezierNormalMagnitude;
                     break;
             }

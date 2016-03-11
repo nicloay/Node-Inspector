@@ -110,7 +110,7 @@ namespace NodeInspector.Editor {
 		{
 			JointAttribute joint = (JointAttribute)Attribute.GetCustomAttribute (scriptableObject.GetType (), typeof(JointAttribute));
 			if (joint != null) {
-                JointData jData = JointData.GetInstance(scriptableObject, windowRect, JointType.Incognito_In);
+                JointData jData = JointData.GetInstance(scriptableObject, windowRect, JointType.Incognito_In, scriptableObject.EditorWindowRect.position);
                 if (!Joints.Contains(jData))
                 {
                     Joints.Add(jData);
@@ -123,7 +123,7 @@ namespace NodeInspector.Editor {
         void MakeKnob(SerializedProperty serializedProperty, Rect lastRect, JointType jointType)
         {
             serializedProperty = serializedProperty.serializedObject.FindProperty(serializedProperty.propertyPath);
-            JointData jData = JointData.GetInstance(serializedProperty, lastRect, jointType);
+            JointData jData = JointData.GetInstance(serializedProperty, lastRect, jointType, scriptableObject.EditorWindowRect.position);
             if (!Joints.Contains(jData))
             {
                 Joints.Add(jData);
