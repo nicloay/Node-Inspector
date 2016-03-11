@@ -5,12 +5,9 @@ using System.Collections.Generic;
 namespace NodeInspector.Editor{	
 	public class ConnectionsCollection {
 		public List<Connection> allConnections;
-        NodeInspector parentWindow;
 
         public ConnectionsCollection(List<Node> allNodes, NodeInspector parentWindow){
-			allConnections = new List<Connection> ();
-            this.parentWindow = parentWindow;
-
+			allConnections = new List<Connection> ();        
 
 			Dictionary<Object, Connection> incognitoInConnections = new Dictionary<Object, Connection> ();
 
