@@ -79,16 +79,12 @@ namespace NodeInspector.Editor{
                 case EventType.Repaint:
                     {
                         
-                        if (ParentNode.ParentWindow.JointHighlight.JointType != JointType.Nan 
-                            && ParentNode.ParentWindow.JointHighlight.JointType == JointType){
-                            //blink if destination
-                            Color color = GUI.color;
-                            color.a = 0.3f + Mathf.PingPong((float)EditorApplication.timeSinceStartup * 2.0f, 0.7f);
-                            GUI.color = color;
+                        if (ParentNode.ParentWindow.JointHighlight.JointType != JointType.Nan){
+                            GUI.enabled = ParentNode.ParentWindow.JointHighlight.JointType == JointType;
                         }
 
                         GUI.Button(KnobButtonRect, KnobButtonCaption, KnobButtonStyle);                       
-                        GUI.color = Color.white;
+                        GUI.enabled = true;
                         break;
                     }
                 case EventType.mouseDown:
