@@ -101,8 +101,7 @@ namespace NodeInspector.Editor{
             }
 
 
-            if (lastDraggedConnection != null){
-                Debug.Log("im here");
+            if (lastDraggedConnection != null){                
                 switch (lastDraggedConnection.ConnectionType){
                     case ConnectionRenderType.MouseToInputNode:                        
                         parentWindow.JointHighlight.JointType = JointType.ManyToOne_Incognito_OUT;

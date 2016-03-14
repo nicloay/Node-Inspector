@@ -75,6 +75,9 @@ namespace NodeInspector.Editor{
         }
 
         public void OnGUI(){
+            
+
+
             switch (Event.current.GetTypeForControl(ControlID)){
                 case EventType.Repaint:
                     {
@@ -91,6 +94,7 @@ namespace NodeInspector.Editor{
                     {
                         if (KnobButtonRect.Contains(Event.current.mousePosition)){
                             GUIUtility.hotControl = ControlID;
+                            Debug.Log("start at "+ControlID);
                             MouseDrag = true;
                             Event.current.Use();
                         }
@@ -103,13 +107,7 @@ namespace NodeInspector.Editor{
                             GUIUtility.hotControl = 0;
                         }
                         break;
-                    }                
-                case EventType.MouseDrag:                    
-                    {         
-                        
-
-                        break;
-                    }           
+                    }                                 
             }
         }
 
