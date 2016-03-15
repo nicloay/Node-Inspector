@@ -4,7 +4,8 @@ using System.Collections.Generic;
 
 namespace NodeInspector.Editor{	
 	public class ConnectionsCollection {
-		public List<Connection> allConnections;
+        public Connection LastDraggedConnection {get; private set;}
+        public List<Connection> allConnections {get; set;}
 
         public ConnectionsCollection(List<Node> allNodes, NodeInspector parentWindow){
 			allConnections = new List<Connection> ();        
@@ -30,7 +31,7 @@ namespace NodeInspector.Editor{
 
             Stack<Joint> UsedByLineJoints = new Stack<Joint>(); // all joints used by line would be store here
             bool handleJointDragging = true;
-            Connection lastDraggedConnection = null;
+            LastDraggedConnection = null;
 			//connect them to fields		
 			foreach (Node node in allNodes) {
                 foreach (Joint joint in node.Joints) {
@@ -58,10 +59,10 @@ namespace NodeInspector.Editor{
 
                                         connection.ConnectionType = connection.InputJoint == parentWindow.StartDraggJoint 
                                             ? ConnectionRenderType.OutputNodeToMouse : ConnectionRenderType.MouseToInputNode;
-                                        if (lastDraggedConnection != null){
-                                            lastDraggedConnection.ConnectionType = ConnectionRenderType.OutputToInput;
+                                        if (LastDraggedConnection != null){
+                                            LastDraggedConnection.ConnectionType = ConnectionRenderType.OutputToInput;
                                         }
-                                        lastDraggedConnection = connection;
+                                        LastDraggedConnection = connection;
 
                                     } else {
                                         connection.ConnectionType = ConnectionRenderType.OutputToInput;
@@ -73,7 +74,7 @@ namespace NodeInspector.Editor{
 				}
 			}
 
-            if (lastDraggedConnection == null){                
+            if (LastDraggedConnection == null){                
                 //lets check maybe we clicked some joints and want to connect it to something
                 foreach (Node node in allNodes) {
                     foreach (Joint joint in node.Joints) {
@@ -94,15 +95,15 @@ namespace NodeInspector.Editor{
                                     break;
                             }
                             allConnections.Add(connection);
-                            lastDraggedConnection = connection;
+                            LastDraggedConnection = connection;
                         } 
                     }
                 }
             }
 
 
-            if (lastDraggedConnection != null){                
-                switch (lastDraggedConnection.ConnectionType){
+            if (LastDraggedConnection != null){                
+                switch (LastDraggedConnection.ConnectionType){
                     case ConnectionRenderType.MouseToInputNode:                        
                         parentWindow.JointHighlight.JointType = JointType.ManyToOne_Incognito_OUT;
                         break;

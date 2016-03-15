@@ -55,13 +55,13 @@ namespace NodeInspector.Editor{
                 connectionGUI.OnGUI();
 			}
 
-            HandleDraggConnections(nodes);
+            HandleDraggConnections(nodes, cCollection.LastDraggedConnection);
             EditorGUILayout.EndScrollView();
             UpdateContentSize(nodes);
         }
 
 
-        void HandleDraggConnections(List<Node> nodes)
+        void HandleDraggConnections(List<Node> nodes, Connection lastDraggedConnection)
         {
             switch(Event.current.GetTypeForControl(ControlID)){
                 case EventType.MouseDown:
@@ -78,7 +78,7 @@ namespace NodeInspector.Editor{
                         if (StartDraggJoint != null){
                             Joint EndDragJoint = GetJointUnderMousePosition(nodes);
 
-                            TryToMakeNewConnection(StartDraggJoint, EndDragJoint);
+                            TryToMakeNewConnection(StartDraggJoint, EndDragJoint, lastDraggedConnection);
                             StartDraggJoint = null;
                             GUIUtility.hotControl = 0;
                             Event.current.Use();
@@ -89,10 +89,15 @@ namespace NodeInspector.Editor{
             }
         }
 
-        void TryToMakeNewConnection(Joint from, Joint to)
+        void TryToMakeNewConnection(Joint from, Joint to, Connection lastDraggedConnection)
         {
             if (from != null && to != null){                
-                Debug.LogFormat("try to connect {0} with {1}", from.ControlID, to.ControlID );
+                if (lastDraggedConnection.InputJoint != null && lastDraggedConnection.OutputJoint != null){
+                    Debug.Log("need to update link");
+                } else {
+                    ObjectConnector.CreateNewConnection(from, to);
+                    //Debug.Log ("need to create new link ");
+                }
             }
         }
 
