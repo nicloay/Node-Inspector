@@ -16,6 +16,7 @@ namespace NodeInspector.Editor{
     public class NodeInspector : EditorWindow {
         public int ControlID{get; private set;}
         public JointHighlightHolder JointHighlight;
+        public Joint StartDraggJoint{get; private set;}
 
         float contentWidth = 0.0f;
         float contentHeight = 0.0f;
@@ -53,9 +54,65 @@ namespace NodeInspector.Editor{
             foreach (Connection connectionGUI in cCollection.allConnections) {
                 connectionGUI.OnGUI();
 			}
+
+            HandleDraggConnections(nodes);
             EditorGUILayout.EndScrollView();
             UpdateContentSize(nodes);
         }
+
+
+        void HandleDraggConnections(List<Node> nodes)
+        {
+            switch(Event.current.GetTypeForControl(ControlID)){
+                case EventType.MouseDown:
+                    {
+                        StartDraggJoint = GetJointUnderMousePosition(nodes);
+                        if (StartDraggJoint != null){
+                            GUIUtility.hotControl = StartDraggJoint.ControlID;
+                            Event.current.Use();
+                        }
+                        break;
+                    } 
+                case EventType.mouseUp:
+                    {
+                        if (StartDraggJoint != null){
+                            Joint EndDragJoint = GetJointUnderMousePosition(nodes);
+
+                            TryToMakeNewConnection(StartDraggJoint, EndDragJoint);
+                            StartDraggJoint = null;
+                            GUIUtility.hotControl = 0;
+                            Event.current.Use();
+                        }
+
+                        break ;   
+                    }    
+            }
+        }
+
+        void TryToMakeNewConnection(Joint from, Joint to)
+        {
+            if (from != null && to != null){                
+                Debug.LogFormat("try to connect {0} with {1}", from.ControlID, to.ControlID );
+            }
+        }
+
+        /// <summary>
+        /// Gets the joint under mouse position.
+        /// return Null if can't find any
+        /// </summary>
+        /// <returns>The joint under mouse position.</returns>
+        /// <param name="nodes">Nodes.</param>
+        Joint GetJointUnderMousePosition(List<Node> nodes){
+            foreach(var node in nodes){
+                foreach(var joint in node.Joints){
+                    if (joint.KnobButtonExternalRect.Contains(Event.current.mousePosition)){
+                        return joint;
+                    }
+                }
+            }
+            return null;
+        }
+
                  
         void UpdateContentSize(List<Node> nodes){
             if (Event.current.type == EventType.Repaint){                

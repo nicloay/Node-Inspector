@@ -29,7 +29,7 @@ namespace NodeInspector.Editor{
 
         public void OnGUI(){
 
-            if (Event.current.type == EventType.mouseDown){  
+            if (Event.current.type == EventType.mouseDown && ConnectionType == ConnectionRenderType.OutputToInput){  
                 Focused = false;             
                 if (HandleUtility.DistancePointBezier(Event.current.mousePosition, OutputJoint.BezierSidePoint, InputJoint.BezierSidePoint,
                     OutputJoint.BezierNormal, InputJoint.BezierNormal) <= BezierMinDistanceForSelection){                   

@@ -49,14 +49,14 @@ namespace NodeInspector.Editor{
                                 UsedByLineJoints.Push(connection.InputJoint);
 
                                 if (handleJointDragging){                                    
-                                    if (connection.InputJoint.MouseDrag || connection.OutputJoint.MouseDrag){                                                                               
+                                    if (connection.InputJoint == parentWindow.StartDraggJoint || connection.OutputJoint == parentWindow.StartDraggJoint){                                                                               
 
                                         if (connection.Focused || connection.ConnectionType != ConnectionRenderType.OutputToInput){                                            
                                             handleJointDragging = false;
                                             //it's possible that several line use this knob and we will drag last one or selected if some of lines in focus
                                         }
 
-                                        connection.ConnectionType = connection.InputJoint.MouseDrag 
+                                        connection.ConnectionType = connection.InputJoint == parentWindow.StartDraggJoint 
                                             ? ConnectionRenderType.OutputNodeToMouse : ConnectionRenderType.MouseToInputNode;
                                         if (lastDraggedConnection != null){
                                             lastDraggedConnection.ConnectionType = ConnectionRenderType.OutputToInput;
@@ -77,7 +77,7 @@ namespace NodeInspector.Editor{
                 //lets check maybe we clicked some joints and want to connect it to something
                 foreach (Node node in allNodes) {
                     foreach (Joint joint in node.Joints) {
-                        if (!UsedByLineJoints.Contains(joint) && joint.MouseDrag){
+                        if (!UsedByLineJoints.Contains(joint) && joint == parentWindow.StartDraggJoint){
                             //here is clicked node so lets create new connection with anonimouse target or source
                             Connection connection = Connection.GetInstance();
                             switch (joint.JointType){
