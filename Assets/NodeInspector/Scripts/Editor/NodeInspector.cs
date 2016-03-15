@@ -17,8 +17,11 @@ namespace NodeInspector.Editor{
         public int ControlID{get; private set;}
         public JointHighlightHolder JointHighlight;
 
-        void OnGUI(){
-            
+        float contentWidth = 0.0f;
+        float contentHeight = 0.0f;
+
+        Vector2 scrollPosition;
+        void OnGUI(){            
             JointHighlight = (JointHighlightHolder) GUIUtility.GetStateObject(typeof(JointHighlightHolder)
                 ,GUIUtility.GetControlID(FocusType.Passive));
             
@@ -30,27 +33,41 @@ namespace NodeInspector.Editor{
                 Event.current.Use();
             }
 
-            List<Node> nodeGUIS  = new List<Node>();
+            List<Node> nodes  = new List<Node>();
             OnGUIToolBar();
-
+            scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
+            GUILayoutUtility.GetRect(GUIContent.none, GUIStyle.none, GUILayout.Width(contentWidth), GUILayout.Height(contentHeight));
             foreach(var graphData in CurrentGraph.ItemList){
                 Node nodeGUI = Node.GetInstance((ScriptableObjectNode)graphData, this);               
-                nodeGUIS.Add(nodeGUI);               
+                nodes.Add(nodeGUI);               
             }
 
             BeginWindows();
-            foreach (Node node in nodeGUIS){
+            foreach (Node node in nodes){
                 node.OnGUI();
             }
             EndWindows();
 
-            ConnectionsCollection cCollection = new ConnectionsCollection (nodeGUIS, this);
+            ConnectionsCollection cCollection = new ConnectionsCollection (nodes, this);
 
             foreach (Connection connectionGUI in cCollection.allConnections) {
                 connectionGUI.OnGUI();
 			}
+            EditorGUILayout.EndScrollView();
+            UpdateContentSize(nodes);
         }
                  
+        void UpdateContentSize(List<Node> nodes){
+            if (Event.current.type == EventType.Repaint){                
+                contentHeight = contentWidth = 0;
+                foreach(var node in nodes){
+                    contentWidth = Mathf.Max(contentWidth, node.WindowRect.xMax) ;
+                    contentHeight = Mathf.Max(contentHeight, node.WindowRect.yMax);
+                }
+            }
+        }
+
+
         Dictionary<string, GraphData> nodes;
         int currentGraphId;
         GraphData CurrentGraph{

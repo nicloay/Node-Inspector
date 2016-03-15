@@ -7,6 +7,7 @@ using System;
 
 namespace NodeInspector.Editor {
     public class Node {
+        public const int MinTopLeftDistance = 10;
         public const int KnobSize = 15;
         public static int OriginalRightPatdding {get; private set;}
 
@@ -58,10 +59,14 @@ namespace NodeInspector.Editor {
 
 
         public Rect OnGUI(){
-            scriptableObject.EditorWindowRect = 
+            Rect newRect = 
                 GUILayout.Window(scriptableObject.GetInstanceID(), 
                     scriptableObject.EditorWindowRect, DoWindow, 
-                    scriptableObject.name, WindowStyle);   
+                    scriptableObject.name, WindowStyle);
+            newRect.x = Mathf.Max(newRect.x, MinTopLeftDistance);
+            newRect.y = Mathf.Max(newRect.y, MinTopLeftDistance);
+
+            scriptableObject.EditorWindowRect = newRect;
             return WindowRect;
         }
 
