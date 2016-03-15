@@ -77,8 +77,7 @@ namespace NodeInspector.Editor{
                     {
                         if (StartDraggJoint != null){
                             Joint EndDragJoint = GetJointUnderMousePosition(nodes);
-
-                            TryToMakeNewConnection(StartDraggJoint, EndDragJoint, lastDraggedConnection);
+                            ObjectConnector.TryToMakeNewConnection(StartDraggJoint, EndDragJoint, lastDraggedConnection);
                             StartDraggJoint = null;
                             GUIUtility.hotControl = 0;
                             Event.current.Use();
@@ -89,17 +88,7 @@ namespace NodeInspector.Editor{
             }
         }
 
-        void TryToMakeNewConnection(Joint from, Joint to, Connection lastDraggedConnection)
-        {
-            if (from != null && to != null){                
-                if (lastDraggedConnection.InputJoint != null && lastDraggedConnection.OutputJoint != null){
-                    Debug.Log("need to update link");
-                } else {
-                    ObjectConnector.CreateNewConnection(from, to);
-                    //Debug.Log ("need to create new link ");
-                }
-            }
-        }
+       
 
         /// <summary>
         /// Gets the joint under mouse position.

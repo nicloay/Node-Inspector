@@ -4,7 +4,16 @@ using NodeInspector;
 
 namespace NodeInspector.Editor{
     public static class ObjectConnector {
-
+        public static void TryToMakeNewConnection(Joint from, Joint to, Connection lastDraggedConnection)
+        {
+            if (from != null && to != null){                
+                if (lastDraggedConnection.InputJoint != null && lastDraggedConnection.OutputJoint != null){
+                    ObjectConnector.UpdateExistingConnection(from, to, lastDraggedConnection);
+                } else {
+                    ObjectConnector.CreateNewConnection(from, to);
+                }
+            }
+        }
 
 
         public static void CreateNewConnection(Joint joint1, Joint joint2){
@@ -26,9 +35,40 @@ namespace NodeInspector.Editor{
         }
 
 
+        public static void UpdateExistingConnection(Joint jointFrom, Joint jointTo, Connection existingConnection){
+            if (jointFrom == jointTo){
+                return;
+            }
+            Joint changeJointFrom, changeJointTo;
+            Joint anotherJoint;
+            if (existingConnection.InputJoint == jointFrom || existingConnection.InputJoint == jointTo){
+                changeJointFrom = existingConnection.InputJoint;
+                anotherJoint = existingConnection.OutputJoint;
+            } else {
+                changeJointFrom = existingConnection.OutputJoint;
+                anotherJoint = existingConnection.InputJoint;
+            }
+            ClearReffToAnotherObject(changeJointFrom);
+            changeJointTo = jointFrom == changeJointFrom ? jointTo : jointFrom;
+            CreateNewConnection(changeJointTo, anotherJoint);
+        }
 
+        static void ClearReffToAnotherObject(Joint joint){
+            switch (joint.JointType){
+                case JointType.ManyToOne_Incognito_OUT:
+                case JointType.OneToOne_Incognito_OUT:
+                    joint.SerializedProperty.objectReferenceValue = null;
+                    joint.SerializedProperty.serializedObject.ApplyModifiedProperties();
+                    break;
+                case JointType.Incognito_In:
+                    break;//do nothing
+                default:
+                    Debug.LogError("Unsuported type "+joint.JointType) ;
+                    break;
+            }
+        }
 
-
+            
         public static bool CouldConnectTwoJointsWithTypes(JointType type1, JointType type2){
             if (!AcceptedJointsDB.ContainsKey(type1) || !AcceptedJointsDB.ContainsKey(type2)){
                 Debug.LogErrorFormat("FIXME: usuported joint type {0} or {1}", type1, type2);
