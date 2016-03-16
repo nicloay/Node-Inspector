@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 
-namespace NodeInspector.Demo{  
+namespace NodeInspector.Demo.OneWay{  
     [CreateAssetMenu]
     public class TestOneWayNodeGraph : ScriptableObject {
         [Graph]
