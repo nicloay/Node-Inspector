@@ -81,7 +81,7 @@ namespace NodeInspector.Editor {
                 return; // we have just one option right now. later we would need to skip just default node 
             }
             Event currentEvent = Event.current;
-            if (currentEvent.type == EventType.ContextClick && newRect.Contains(currentEvent.mousePosition)){
+            if (currentEvent.type == EventType.ContextClick && scriptableObject.EditorWindowRect.Contains(currentEvent.mousePosition)){
                 GenericMenu menu = new GenericMenu() ;
                 menu.AddItem(new GUIContent( "Make Default"), false, (obj) => { 
                     ParentWindow.CurrentGraph.StartNode.objectReferenceValue = (UnityEngine.Object) obj;
