@@ -66,14 +66,14 @@ namespace NodeInspector.Editor{
         public void ClearJointLink(){
             
             switch(JointType){
-                case JointType.OneToOne_Incognito_OUT:
+                case JointType.OneWay_OUT:
                     SerializedProperty.serializedObject.Update();
                     SerializedProperty.objectReferenceValue = null;
                     SerializedProperty.serializedObject.ApplyModifiedProperties();
 
                     GUI.changed = true;
                     break;
-                case JointType.Incognito_In:
+                case JointType.OneWay_IN:
                     //don't need to clear anything;
                     break;
                 default:
@@ -97,7 +97,7 @@ namespace NodeInspector.Editor{
         void SetupGUIVariables(Vector2 parentWindowGlobalPosition)
         {
             switch(JointType){
-                case JointType.Incognito_In:
+                case JointType.OneWay_IN:
                     KnobButtonInternalRect = new Rect(Node.KnobSize * 2,  0, Node.KnobSize, Node.KnobSize);
                     BezierSidePoint = parentWindowGlobalPosition + new Vector2(Node.KnobSize*2.5f, 0.0f);
                     BezierNormal = BezierSidePoint + Vector2.down * BezierNormalMagnitude;
@@ -118,8 +118,11 @@ namespace NodeInspector.Editor{
             }
 
             switch(JointType){
-                case JointType.Incognito_In:
-                    KnobButtonCaption = "i";
+                case JointType.OneWay_IN:
+                    KnobButtonCaption = "o";
+                    break;
+                case JointType.OneWay_OUT:
+                    KnobButtonCaption = "o";
                     break;
                 case JointType.ManyToMany_IN:
                 case JointType.ManyToOne_IN:
@@ -133,7 +136,7 @@ namespace NodeInspector.Editor{
             }
 
             switch(JointType){
-                case JointType.Incognito_In:
+                case JointType.OneWay_IN:
                     KnobButtonStyle = EditorStyles.miniButton;
                     break;
                 case JointType.ManyToMany_IN:

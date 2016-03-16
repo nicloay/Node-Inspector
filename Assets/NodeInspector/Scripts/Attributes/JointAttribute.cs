@@ -4,10 +4,10 @@ namespace NodeInspector{
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Class)]
 
     public class JointAttribute : Attribute {
-        public JointType JointType;
+        //public JointType JointType;
 
-        public JointAttribute(JointType jointType){
-            JointType = jointType;
+        public JointAttribute(){
+          //  JointType = jointType;
         }
     }
 }

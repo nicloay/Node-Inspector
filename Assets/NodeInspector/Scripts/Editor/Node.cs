@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using NodeInspector;
 using System;
+using System.Runtime.Remoting.Messaging;
 
 namespace NodeInspector.Editor {
     public class Node {
@@ -74,7 +75,7 @@ namespace NodeInspector.Editor {
         {   
             EditorGUI.BeginChangeCheck();
             serializedObject.Update();
-            AddJointIfAcceptIncognito ();
+            AddJointIfAcceptOneWay ();
             SerializedProperty iterator = serializedObject.GetIterator();
             for (bool enterChildren = true; iterator.NextVisible(enterChildren); enterChildren = false){
                 if (iterator.propertyType != SerializedPropertyType.ObjectReference || !(iterator.objectReferenceValue is MonoScript)){                    
@@ -105,20 +106,23 @@ namespace NodeInspector.Editor {
             if (property.propertyType != SerializedPropertyType.ObjectReference){
                 return JointType.Nan;
             }
-			JointAttribute joint=(JointAttribute) Attribute.GetCustomAttribute(property.serializedObject.targetObject.GetType().GetField(property.name), typeof(JointAttribute));
-            if (joint == null){
+
+            //Handle OneWay connections
+
+            OneWayAttribute oneWay=(OneWayAttribute) Attribute.GetCustomAttribute
+                (property.serializedObject.targetObject.GetType().GetField(property.name), typeof(OneWayAttribute));
+            if (oneWay == null){
                 return JointType.Nan;
             } else {
-                return joint.JointType;
+                return JointType.OneWay_OUT;
             }
-
         }
 
-		void AddJointIfAcceptIncognito ()
+		void AddJointIfAcceptOneWay ()
 		{
-			JointAttribute joint = (JointAttribute)Attribute.GetCustomAttribute (scriptableObject.GetType (), typeof(JointAttribute));
-			if (joint != null) {
-                Joint jData = Joint.GetInstance(scriptableObject, windowRect, JointType.Incognito_In, scriptableObject.EditorWindowRect.position, this);
+            OneWayAttribute oneWay = (OneWayAttribute)Attribute.GetCustomAttribute (scriptableObject.GetType (), typeof(OneWayAttribute));
+			if (oneWay != null) {
+                Joint jData = Joint.GetInstance(scriptableObject, windowRect, JointType.OneWay_IN, scriptableObject.EditorWindowRect.position, this);
                 if (!Joints.Contains(jData) && Event.current.type == EventType.Repaint)
                 {
                     Joints.Add(jData);
