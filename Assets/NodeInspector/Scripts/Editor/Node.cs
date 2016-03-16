@@ -60,16 +60,39 @@ namespace NodeInspector.Editor {
 
 
         public Rect OnGUI(){
+            
+           
+           
+
             Rect newRect = 
                 GUILayout.Window(scriptableObject.GetInstanceID(), 
                     scriptableObject.EditorWindowRect, DoWindow, 
                     scriptableObject.name, WindowStyle);
             newRect.x = Mathf.Max(newRect.x, MinTopLeftDistance);
             newRect.y = Mathf.Max(newRect.y, MinTopLeftDistance);
-
             scriptableObject.EditorWindowRect = newRect;
+
+           
             return WindowRect;
         }
+
+        void HandleContextClick(){
+            if (ParentWindow.CurrentGraph.StartNode == null){
+                return; // we have just one option right now. later we would need to skip just default node 
+            }
+            Event currentEvent = Event.current;
+            if (currentEvent.type == EventType.ContextClick && newRect.Contains(currentEvent.mousePosition)){
+                GenericMenu menu = new GenericMenu() ;
+                menu.AddItem(new GUIContent( "Make Default"), false, (obj) => { 
+                    ParentWindow.CurrentGraph.StartNode.objectReferenceValue = (UnityEngine.Object) obj;
+                    ParentWindow.CurrentGraph.StartNode.serializedObject.ApplyModifiedProperties();
+                }, scriptableObject);
+                menu.ShowAsContext();
+                currentEvent.Use();
+            }
+
+        }
+
 
         void DoWindow(int id)
         {   
@@ -91,12 +114,21 @@ namespace NodeInspector.Editor {
                     }
                 }                    
             }
+
             foreach(Joint joint in Joints){
                 joint.OnGUI();
             }
 
+            if (ParentWindow.CurrentGraph.StartNode != null && ParentWindow.CurrentGraph.StartNode.objectReferenceValue == scriptableObject){
+                Rect selectBox = new Rect(0,0, WindowRect.width - KnobSize, KnobSize);
+                GUIStyle style = new GUIStyle(EditorStyles.miniLabel);
+                style.alignment = TextAnchor.MiddleRight;
+                GUI.Label(selectBox, " Start Node", style);
+            }
+            
             serializedObject.ApplyModifiedProperties();
             EditorGUI.EndChangeCheck();
+
             GUI.DragWindow(new Rect(KnobSize, KnobSize, scriptableObject.EditorWindowRect.width - KnobSize*2, GUI.skin.window.border.top));
         }
 

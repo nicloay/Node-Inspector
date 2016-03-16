@@ -119,13 +119,15 @@ namespace NodeInspector.Editor{
         }
 
 
-        Dictionary<string, GraphData> nodes;
+        Dictionary<string, GraphData> graphList;
         int currentGraphId;
-        GraphData CurrentGraph{
+        public GraphData CurrentGraph{
             get{
-                return nodes.Values.ElementAt(currentGraphId);
+                return graphList.Values.ElementAt(currentGraphId);
             }
         }
+
+
             
 
         bool CheckSelectedObject(){
@@ -134,16 +136,16 @@ namespace NodeInspector.Editor{
             }
             ScriptableObject so = Selection.activeObject as ScriptableObject;
 
-            nodes = new Dictionary<string, GraphData>();
+            graphList = new Dictionary<string, GraphData>();
             foreach (FieldInfo fieldInfo in  so.GetType().GetFields()){
                 GraphData data;
                 if (GraphData.CanCreateGraphData(so, fieldInfo, out data)){
                     string uniqueName = data.PropertyName;
                     int i =0;
-                    while (nodes.Keys.Contains(uniqueName)){
+                    while (graphList.Keys.Contains(uniqueName)){
                         uniqueName = data.PropertyName+" ["+(++i)+"]";
                     }
-                    nodes.Add(uniqueName, data);
+                    graphList.Add(uniqueName, data);
                 }
             }
             //return nodes.Count > 0;
@@ -196,7 +198,7 @@ namespace NodeInspector.Editor{
 
 
         void GUICreateGraphsItems(){            
-            currentGraphId = EditorGUILayout.Popup(currentGraphId, nodes.Keys.ToArray(), EditorStyles.toolbarPopup);
+            currentGraphId = EditorGUILayout.Popup(currentGraphId, graphList.Keys.ToArray(), EditorStyles.toolbarPopup);
         }
 
        
