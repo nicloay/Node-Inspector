@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-namespace NodeInspector{
+namespace NodeInspector.Editor{
     public enum JointType {
         Nan,
         OneToOne_IN,
@@ -12,8 +12,7 @@ namespace NodeInspector{
         ManyToOne_Out,
         ManyToMany_IN,
         ManyToMany_OUT,
-        OneToOne_Incognito_OUT,
-        ManyToOne_Incognito_OUT,
-        Incognito_In //This works only for class attribute
+        OneWay_OUT,
+        OneWay_IN //This works only for class attribute
     }
 }

@@ -10,19 +10,19 @@ namespace NodeInspector.Editor{
         public ConnectionsCollection(List<Node> allNodes, NodeInspector parentWindow){
 			allConnections = new List<Connection> ();        
 
-			Dictionary<Object, Connection> incognitoInConnections = new Dictionary<Object, Connection> ();
+            Dictionary<Object, Connection> oneWayIncomingConnections = new Dictionary<Object, Connection> ();
 
             			
 			foreach (Node node in allNodes) {
 				foreach (Joint jointData in node.Joints) {
-					if (jointData.JointType == JointType.Incognito_In) {
+					if (jointData.JointType == JointType.OneWay_IN) {
                         
-                        if (incognitoInConnections.ContainsKey(jointData.ObjectRefferenceValue))
+                        if (oneWayIncomingConnections.ContainsKey(jointData.ObjectRefferenceValue))
                         {
                             Debug.LogError("FIXME: we already have this value " + jointData.ObjectRefferenceValue);
                         } else {                            
                             Connection connectionData = GetNewConnectionGUI(jointData);
-                            incognitoInConnections.Add(jointData.ObjectRefferenceValue, connectionData);
+                            oneWayIncomingConnections.Add(jointData.ObjectRefferenceValue, connectionData);
                         }
 					} 
 				}
@@ -35,11 +35,11 @@ namespace NodeInspector.Editor{
 			//connect them to fields		
 			foreach (Node node in allNodes) {
                 foreach (Joint joint in node.Joints) {
-					if (joint.JointType == JointType.OneToOne_Incognito_OUT || joint.JointType == JointType.ManyToOne_Incognito_OUT) {
+					if (joint.JointType == JointType.OneWay_OUT) {
                         if (joint.ObjectRefferenceValue != null){
                             Connection connection;
-                            if (incognitoInConnections.ContainsKey(joint.ObjectRefferenceValue)){
-                                connection = incognitoInConnections[joint.ObjectRefferenceValue];
+                            if (oneWayIncomingConnections.ContainsKey(joint.ObjectRefferenceValue)){
+                                connection = oneWayIncomingConnections[joint.ObjectRefferenceValue];
                                 if (connection.OutputJoint != null){                                    
                                     //need to clone this connection because one already connected to something
                                     connection = GetNewConnectionGUI(connection.InputJoint);
@@ -82,12 +82,12 @@ namespace NodeInspector.Editor{
                             //here is clicked node so lets create new connection with anonimouse target or source
                             Connection connection = Connection.GetInstance();
                             switch (joint.JointType){
-                                case JointType.Incognito_In:
+                                case JointType.OneWay_IN:
                                     connection.InputJoint = joint;
                                     connection.OutputJoint = null;
                                     connection.ConnectionType = ConnectionRenderType.MouseToInputNode;
                                     break;
-                                case JointType.OneToOne_Incognito_OUT:
+                                case JointType.OneWay_OUT:
                                     connection.OutputJoint = joint;
                                     connection.InputJoint = null;
                                     connection.ConnectionType = ConnectionRenderType.OutputNodeToMouse;
@@ -107,10 +107,10 @@ namespace NodeInspector.Editor{
             if (LastDraggedConnection != null){                
                 switch (LastDraggedConnection.ConnectionType){
                     case ConnectionRenderType.MouseToInputNode:                        
-                        parentWindow.JointHighlight.JointType = JointType.ManyToOne_Incognito_OUT;
+                        parentWindow.JointHighlight.JointType = JointType.OneWay_OUT;
                         break;
                     case ConnectionRenderType.OutputNodeToMouse:
-                        parentWindow.JointHighlight.JointType = JointType.Incognito_In;
+                        parentWindow.JointHighlight.JointType = JointType.OneWay_IN;
                         break;
                     default:
                         Debug.LogError("FIXME: must not be here");

@@ -23,7 +23,7 @@ namespace NodeInspector.Editor{
             if (CouldConnectTwoJointsWithTypes(type1,type2)){
 
                 //anonimous connections;
-                if (type1 == JointType.Incognito_In){
+                if (type1 == JointType.OneWay_IN){
                     joint2.SerializedProperty.objectReferenceValue = joint1.ObjectRefferenceValue;
                     joint2.SerializedProperty.serializedObject.ApplyModifiedProperties();
                 } else {
@@ -54,14 +54,13 @@ namespace NodeInspector.Editor{
         }
 
         static void ClearReffToAnotherObject(Joint joint){
-            switch (joint.JointType){
-                case JointType.ManyToOne_Incognito_OUT:
-                case JointType.OneToOne_Incognito_OUT:
+            switch (joint.JointType){                
+                case JointType.OneWay_OUT:
                     joint.SerializedProperty.objectReferenceValue = null;
                     joint.SerializedProperty.serializedObject.ApplyModifiedProperties();
                     GUI.changed = true;
                     break;
-                case JointType.Incognito_In:
+                case JointType.OneWay_IN:
                     break;//do nothing
                 default:
                     Debug.LogError("Unsuported type "+joint.JointType) ;
@@ -79,9 +78,8 @@ namespace NodeInspector.Editor{
         }
 
         static Dictionary<JointType, HashSet<JointType>> AcceptedJointsDB = new Dictionary<JointType, HashSet<JointType>>{
-            {JointType.Incognito_In, new HashSet<JointType>(){JointType.OneToOne_Incognito_OUT, JointType.ManyToOne_Incognito_OUT}},
-            {JointType.OneToOne_Incognito_OUT, new HashSet<JointType>(){JointType.Incognito_In}},
-            {JointType.ManyToOne_Incognito_OUT, new HashSet<JointType>(){JointType.Incognito_In}}
+            {JointType.OneWay_IN , new HashSet<JointType>(){JointType.OneWay_OUT}},
+            {JointType.OneWay_OUT, new HashSet<JointType>(){JointType.OneWay_IN}}
         };
     }
 }

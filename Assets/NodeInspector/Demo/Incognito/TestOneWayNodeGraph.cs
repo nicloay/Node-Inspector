@@ -4,8 +4,8 @@ using System.Collections.Generic;
 
 namespace NodeInspector.Demo{  
     [CreateAssetMenu]
-    public class TestIncognitoGraph : ScriptableObject {
+    public class TestOneWayNodeGraph : ScriptableObject {
         [Graph]
-        public List<IncognitoNode> IncognitorNodes;
+        public List<OneWayNode> OneWayNodes;
     }    
 }
