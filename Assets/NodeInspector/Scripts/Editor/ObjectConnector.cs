@@ -59,6 +59,7 @@ namespace NodeInspector.Editor{
                 case JointType.OneToOne_Incognito_OUT:
                     joint.SerializedProperty.objectReferenceValue = null;
                     joint.SerializedProperty.serializedObject.ApplyModifiedProperties();
+                    GUI.changed = true;
                     break;
                 case JointType.Incognito_In:
                     break;//do nothing

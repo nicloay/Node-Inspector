@@ -146,7 +146,8 @@ namespace NodeInspector.Editor{
                     nodes.Add(uniqueName, data);
                 }
             }
-            return nodes.Count > 0;
+            //return nodes.Count > 0;
+            return true;
         }
 
 

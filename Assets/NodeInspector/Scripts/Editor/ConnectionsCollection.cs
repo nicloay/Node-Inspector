@@ -84,10 +84,12 @@ namespace NodeInspector.Editor{
                             switch (joint.JointType){
                                 case JointType.Incognito_In:
                                     connection.InputJoint = joint;
+                                    connection.OutputJoint = null;
                                     connection.ConnectionType = ConnectionRenderType.MouseToInputNode;
                                     break;
                                 case JointType.OneToOne_Incognito_OUT:
                                     connection.OutputJoint = joint;
+                                    connection.InputJoint = null;
                                     connection.ConnectionType = ConnectionRenderType.OutputNodeToMouse;
                                     break;
                                 default:
