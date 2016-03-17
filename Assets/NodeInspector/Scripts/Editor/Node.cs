@@ -158,7 +158,7 @@ namespace NodeInspector.Editor {
             OneWayAttribute oneWay = (OneWayAttribute)Attribute.GetCustomAttribute (scriptableObject.GetType (), typeof(OneWayAttribute));
 			if (oneWay != null) {
                 Joint jData = Joint.GetInstance(scriptableObject, windowRect, JointType.OneWay_IN, scriptableObject.EditorWindowRect.position, this);
-                if (!Joints.Contains(jData) && Event.current.type == EventType.Repaint)
+                if (!Joints.Contains(jData))
                 {
                     Joints.Add(jData);
                 }
@@ -170,7 +170,7 @@ namespace NodeInspector.Editor {
         {
             serializedProperty = serializedProperty.serializedObject.FindProperty(serializedProperty.propertyPath);
             Joint jData = Joint.GetInstance(serializedProperty, lastRect, jointType, scriptableObject.EditorWindowRect.position, this);
-            if (!Joints.Contains(jData) && Event.current.type == EventType.Repaint)
+            if (!Joints.Contains(jData))
             {
                 Joints.Add(jData);
             }
