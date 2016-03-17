@@ -12,9 +12,7 @@ namespace NodeInspector.Editor{
 
             Dictionary<Object, Connection> oneWayIncomingConnections = new Dictionary<Object, Connection> ();
 
-            Debug.Log("nodecount = "+allNodes.Count);           			
 			foreach (Node node in allNodes) {
-                Debug.Log("node joint count "+ node.Joints.Count);
 				foreach (Joint jointData in node.Joints) {
 					if (jointData.JointType == JointType.OneWay_IN) {
                         

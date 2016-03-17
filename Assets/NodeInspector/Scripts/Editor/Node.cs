@@ -53,8 +53,8 @@ namespace NodeInspector.Editor {
             if (result.scriptableObject != scriptableObjectNode){
                 result.scriptableObject = scriptableObjectNode;
                 result.serializedObject = new SerializedObject(scriptableObjectNode);
-                result.Joints = new List<Joint>();
             }
+            result.Joints = new List<Joint>();
             return result;
         }
 
