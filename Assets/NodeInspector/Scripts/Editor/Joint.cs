@@ -1,9 +1,8 @@
 ﻿using UnityEngine;
 using UnityEditor;
 
-
 namespace NodeInspector.Editor{
-    public class Joint {
+    public class Joint : System.IEquatable<Joint> {
 
 
         const float BezierNormalMagnitude = 30.0f;
@@ -150,9 +149,15 @@ namespace NodeInspector.Editor{
                     break;   
             }
         }
-
-
-           
-
+            
+        #region IEquatable implementation
+        public bool Equals(Joint other)
+        {
+            return this.FieldInternalRect == other.FieldInternalRect 
+            && this.JointType == other.JointType 
+            && this.SerializedProperty == other.SerializedProperty 
+            && this.ObjectRefferenceValue == other.ObjectRefferenceValue;
+        }
+        #endregion
     }
 }
