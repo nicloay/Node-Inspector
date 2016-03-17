@@ -176,6 +176,9 @@ namespace NodeInspector.Editor{
                         .SelectMany(s=>s.GetTypes())
                         .Where(p=>CurrentGraph.ItemBaseType.IsAssignableFrom(p));
                     foreach (Type nodeType in types){
+                        if (nodeType.IsAbstract || nodeType.IsInterface){
+                            continue;
+                        }
                         string menuPath = nodeType.Name ;
                         Type attributeType = typeof(NodeMenuItemAttribute);
                         NodeMenuItemAttribute attr = (NodeMenuItemAttribute)Attribute.GetCustomAttribute(nodeType, attributeType);
@@ -202,14 +205,9 @@ namespace NodeInspector.Editor{
         }
 
        
-        [MenuItem("Test/GUIWindow")]
-        static void Init(){
-            
+        [MenuItem("Window/NodeInspector")]
+        static void Init(){            
             EditorWindow.GetWindow(typeof(NodeInspector));
-
         }
-
-
-
     }    
 }

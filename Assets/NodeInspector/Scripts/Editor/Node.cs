@@ -62,17 +62,20 @@ namespace NodeInspector.Editor {
         public Rect OnGUI(){
             
            
-           
+            string windowName = scriptableObject.GetType().Name;
+            if (!string.IsNullOrEmpty(scriptableObject.name)){
+                windowName+=" | "+scriptableObject.name;
+            }
 
             Rect newRect = 
                 GUILayout.Window(scriptableObject.GetInstanceID(), 
                     scriptableObject.EditorWindowRect, DoWindow, 
-                    scriptableObject.name, WindowStyle);
+                    windowName, WindowStyle);
             newRect.x = Mathf.Max(newRect.x, MinTopLeftDistance);
             newRect.y = Mathf.Max(newRect.y, MinTopLeftDistance);
             scriptableObject.EditorWindowRect = newRect;
 
-           
+            HandleContextClick();
             return WindowRect;
         }
 
