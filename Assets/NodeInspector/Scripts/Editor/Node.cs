@@ -59,21 +59,51 @@ namespace NodeInspector.Editor {
         }
 
 
-        public Rect OnGUI(){
+        public void OnGUI(){            
+            string windowName = scriptableObject.GetType().Name;
+            if (!string.IsNullOrEmpty(scriptableObject.name)){
+                windowName+=" | "+scriptableObject.name;
+            }
+
             Rect newRect = 
                 GUILayout.Window(scriptableObject.GetInstanceID(), 
                     scriptableObject.EditorWindowRect, DoWindow, 
-                    scriptableObject.name, WindowStyle);
+                    windowName, WindowStyle);
             newRect.x = Mathf.Max(newRect.x, MinTopLeftDistance);
             newRect.y = Mathf.Max(newRect.y, MinTopLeftDistance);
-
             scriptableObject.EditorWindowRect = newRect;
-            return WindowRect;
+
+            HandleContextClick();
         }
 
+        void HandleContextClick(){
+            if (ParentWindow.CurrentGraph.StartNode == null){
+                return; // we have just one option right now. later we would need to skip just default node 
+            }
+            Event currentEvent = Event.current;
+            if (currentEvent.type == EventType.ContextClick && scriptableObject.EditorWindowRect.Contains(currentEvent.mousePosition)){
+                GenericMenu menu = new GenericMenu() ;
+                if (ParentWindow.CurrentGraph.StartNode != null){                    
+                    menu.AddItem(new GUIContent( "Make Default"), false, (obj) => { 
+                        ParentWindow.CurrentGraph.StartNode.objectReferenceValue = (UnityEngine.Object) obj;
+                        ParentWindow.CurrentGraph.StartNode.serializedObject.ApplyModifiedProperties();
+                    }, scriptableObject);                    
+                }
+                menu.AddItem (new GUIContent("Delete"), false, (obj)=>{                    
+                    ParentWindow.CurrentGraph.RemoveElementFromList((ScriptableObject)obj);
+                }, scriptableObject);
+
+                menu.ShowAsContext();
+                currentEvent.Use();
+            }
+
+        }
+
+        HashSet<Joint> currentJoints =new HashSet<Joint>();
         void DoWindow(int id)
         {   
             EditorGUI.BeginChangeCheck();
+            currentJoints.Clear();
             serializedObject.Update();
             AddJointIfAcceptOneWay ();
             SerializedProperty iterator = serializedObject.GetIterator();
@@ -91,15 +121,38 @@ namespace NodeInspector.Editor {
                     }
                 }                    
             }
+
+            RemoveUnusedJoints(Joints);
+
             foreach(Joint joint in Joints){
                 joint.OnGUI();
             }
 
+            if (ParentWindow.CurrentGraph.StartNode != null && ParentWindow.CurrentGraph.StartNode.objectReferenceValue == scriptableObject){
+                Rect selectBox = new Rect(0,0, WindowRect.width - KnobSize, KnobSize);
+                GUIStyle style = new GUIStyle(EditorStyles.miniLabel);
+                style.alignment = TextAnchor.MiddleRight;
+                GUI.Label(selectBox, " Start Node", style);
+            }
+            
             serializedObject.ApplyModifiedProperties();
             EditorGUI.EndChangeCheck();
+
             GUI.DragWindow(new Rect(KnobSize, KnobSize, scriptableObject.EditorWindowRect.width - KnobSize*2, GUI.skin.window.border.top));
         }
 
+        void RemoveUnusedJoints(List<Joint> joints)
+        {
+            List<Joint> jointsToRemove = new List<Joint>();
+            foreach(var joint in joints){
+                if (!currentJoints.Contains(joint)){
+                    jointsToRemove.Add(joint);
+                }
+            }
+            foreach (var joint in jointsToRemove){
+                joints.Remove(joint);
+            }
+        }
 
 
         JointType GetPropertyJointType(SerializedProperty property){
@@ -123,10 +176,11 @@ namespace NodeInspector.Editor {
             OneWayAttribute oneWay = (OneWayAttribute)Attribute.GetCustomAttribute (scriptableObject.GetType (), typeof(OneWayAttribute));
 			if (oneWay != null) {
                 Joint jData = Joint.GetInstance(scriptableObject, windowRect, JointType.OneWay_IN, scriptableObject.EditorWindowRect.position, this);
-                if (!Joints.Contains(jData) && Event.current.type == EventType.Repaint)
+                if (!Joints.Contains(jData))
                 {
                     Joints.Add(jData);
                 }
+                currentJoints.Add(jData);
 			}
 		}
 
@@ -135,10 +189,11 @@ namespace NodeInspector.Editor {
         {
             serializedProperty = serializedProperty.serializedObject.FindProperty(serializedProperty.propertyPath);
             Joint jData = Joint.GetInstance(serializedProperty, lastRect, jointType, scriptableObject.EditorWindowRect.position, this);
-            if (!Joints.Contains(jData) && Event.current.type == EventType.Repaint)
+            if (!Joints.Contains(jData))
             {
                 Joints.Add(jData);
             }
+            currentJoints.Add(jData);
         }
     }
 }

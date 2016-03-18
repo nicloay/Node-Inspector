@@ -22,17 +22,22 @@ namespace NodeInspector.Editor{
         float contentHeight = 0.0f;
 
         Vector2 scrollPosition;
-        void OnGUI(){            
-            JointHighlight = (JointHighlightHolder) GUIUtility.GetStateObject(typeof(JointHighlightHolder)
-                ,GUIUtility.GetControlID(FocusType.Passive));
-            
+        void OnGUI(){                                  
             if (!CheckSelectedObject()){
                 return;
             }
 
             if (Event.current.type == EventType.ValidateCommand && Event.current.commandName == "UndoRedoPerformed"){
                 Event.current.Use();
+                return;
             }
+
+            if (Event.current.type == EventType.Used){
+                return;
+            }
+
+            JointHighlight = (JointHighlightHolder) GUIUtility.GetStateObject(typeof(JointHighlightHolder)
+                ,GUIUtility.GetControlID(FocusType.Passive));
 
             List<Node> nodes  = new List<Node>();
             OnGUIToolBar();
@@ -119,31 +124,30 @@ namespace NodeInspector.Editor{
         }
 
 
-        Dictionary<string, GraphData> nodes;
+        Dictionary<string, GraphData> graphList;
         int currentGraphId;
-        GraphData CurrentGraph{
+        public GraphData CurrentGraph{
             get{
-                return nodes.Values.ElementAt(currentGraphId);
+                return graphList.Values.ElementAt(currentGraphId);
             }
         }
-            
-
+         
         bool CheckSelectedObject(){
             if (Selection.activeObject == null || !(Selection.activeObject is ScriptableObject)){
                 return false;
             }
             ScriptableObject so = Selection.activeObject as ScriptableObject;
 
-            nodes = new Dictionary<string, GraphData>();
+            graphList = new Dictionary<string, GraphData>();
             foreach (FieldInfo fieldInfo in  so.GetType().GetFields()){
                 GraphData data;
                 if (GraphData.CanCreateGraphData(so, fieldInfo, out data)){
                     string uniqueName = data.PropertyName;
                     int i =0;
-                    while (nodes.Keys.Contains(uniqueName)){
+                    while (graphList.Keys.Contains(uniqueName)){
                         uniqueName = data.PropertyName+" ["+(++i)+"]";
                     }
-                    nodes.Add(uniqueName, data);
+                    graphList.Add(uniqueName, data);
                 }
             }
             //return nodes.Count > 0;
@@ -174,6 +178,9 @@ namespace NodeInspector.Editor{
                         .SelectMany(s=>s.GetTypes())
                         .Where(p=>CurrentGraph.ItemBaseType.IsAssignableFrom(p));
                     foreach (Type nodeType in types){
+                        if (nodeType.IsAbstract || nodeType.IsInterface){
+                            continue;
+                        }
                         string menuPath = nodeType.Name ;
                         Type attributeType = typeof(NodeMenuItemAttribute);
                         NodeMenuItemAttribute attr = (NodeMenuItemAttribute)Attribute.GetCustomAttribute(nodeType, attributeType);
@@ -196,18 +203,13 @@ namespace NodeInspector.Editor{
 
 
         void GUICreateGraphsItems(){            
-            currentGraphId = EditorGUILayout.Popup(currentGraphId, nodes.Keys.ToArray(), EditorStyles.toolbarPopup);
+            currentGraphId = EditorGUILayout.Popup(currentGraphId, graphList.Keys.ToArray(), EditorStyles.toolbarPopup);
         }
 
        
-        [MenuItem("Test/GUIWindow")]
-        static void Init(){
-            
+        [MenuItem("Window/NodeInspector")]
+        static void Init(){            
             EditorWindow.GetWindow(typeof(NodeInspector));
-
         }
-
-
-
     }    
 }

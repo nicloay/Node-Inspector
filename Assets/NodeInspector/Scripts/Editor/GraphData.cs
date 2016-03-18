@@ -13,6 +13,8 @@ namespace NodeInspector.Editor{
         public Type ItemBaseType{get; private set;}
         public String PropertyName;
         public IList  ItemList;
+        public SerializedProperty StartNode;
+        public SerializedProperty SerializedItemList;
 
         private GraphData()
         {            
@@ -29,13 +31,13 @@ namespace NodeInspector.Editor{
 
         public static bool CanCreateGraphData(ScriptableObject parentObject, FieldInfo fieldInfo, out GraphData graphData){
             graphData = null;
-            object value = fieldInfo.GetValue(parentObject);
-            if (value == null){
+            object fieldValue = fieldInfo.GetValue(parentObject);
+            if (fieldValue == null){
                 return false;
             }
-            Type valueType = value.GetType();
-            if (valueType.IsGenericType && (valueType.GetGenericTypeDefinition() == typeof(List<>))
-                && typeof(ScriptableObject).IsAssignableFrom( valueType.GetGenericArguments()[0])){
+            Type fieldValueType = fieldValue.GetType();
+            if (fieldValueType.IsGenericType && (fieldValueType.GetGenericTypeDefinition() == typeof(List<>))
+                && typeof(ScriptableObject).IsAssignableFrom( fieldValueType.GetGenericArguments()[0])){
 
                 object[] attributes = fieldInfo.GetCustomAttributes(false);
                 if (attributes == null || attributes.Length == 0){
@@ -44,18 +46,59 @@ namespace NodeInspector.Editor{
                 GraphAttribute attribute =  attributes
                     .ToList().First((arg) => arg.GetType() == typeof(GraphAttribute)) as GraphAttribute;
                 if (attribute != null){
+                    SerializedObject serializedObject = new SerializedObject(parentObject);
                     graphData = new GraphData();
-                    graphData.ItemBaseType = valueType.GetGenericArguments()[0];
-                    graphData.ItemList = value as IList;
-                    graphData.PropertyName = attribute.Name;
+                    graphData.ItemBaseType = fieldValueType.GetGenericArguments()[0];
+                    graphData.ItemList = fieldValue as IList;
+                    graphData.PropertyName = attribute.StartNode;
                     graphData.ParentObject = parentObject;
+                    graphData.SerializedItemList = serializedObject.FindProperty(fieldInfo.Name);
                     if (string.IsNullOrEmpty(graphData.PropertyName)){
                         graphData.PropertyName = fieldInfo.Name;
                     }
+                    graphData.StartNode = null;
+                    if (!string.IsNullOrEmpty(attribute.StartNode)){
+                        graphData.StartNode = serializedObject.FindProperty(attribute.StartNode);
+                        if (graphData.StartNode == null){
+                            Debug.LogError("Cant find property with name " + attribute.StartNode +" for this graph");
+                        } else if (false){ //fixme through reflexion get field type
+                            graphData.StartNode = null ;
+                            Debug.LogError("Start node type is not assignable from graph node type");
+                        }
+
+                    } 
+                    graphData.SetDefaultStartNodeIfNothingSelected();
                     return true;
                 }
             }
+
+
             return false;
         }
+
+        void SetDefaultStartNodeIfNothingSelected(){
+            if (StartNode != null && StartNode.objectReferenceValue == null && ItemList.Count > 0){
+                StartNode.objectReferenceValue = ItemList[0] as UnityEngine.Object;
+                StartNode.serializedObject.ApplyModifiedProperties();
+            }
+        }
+
+        public void RemoveElementFromList(ScriptableObject listItem){
+            for (int index = 0; index < ItemList.Count; index++) {
+                if (ItemList[index] == listItem){                            
+                    SerializedItemList.GetArrayElementAtIndex(index).objectReferenceValue = null;
+                    SerializedItemList.DeleteArrayElementAtIndex(index);
+                    SerializedItemList.serializedObject.ApplyModifiedProperties();
+                    break;
+                }
+            }
+
+            if (StartNode != null 
+                && StartNode.objectReferenceValue == listItem){
+                StartNode.objectReferenceValue = null;
+                StartNode.serializedObject.ApplyModifiedProperties();
+            }
+        }
+
     }
 }

@@ -12,7 +12,6 @@ namespace NodeInspector.Editor{
 
             Dictionary<Object, Connection> oneWayIncomingConnections = new Dictionary<Object, Connection> ();
 
-            			
 			foreach (Node node in allNodes) {
 				foreach (Joint jointData in node.Joints) {
 					if (jointData.JointType == JointType.OneWay_IN) {
