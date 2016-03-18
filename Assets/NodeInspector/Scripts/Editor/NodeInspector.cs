@@ -32,6 +32,10 @@ namespace NodeInspector.Editor{
                 return;
             }
 
+            if (Event.current.type == EventType.Used){
+                return;
+            }
+
             JointHighlight = (JointHighlightHolder) GUIUtility.GetStateObject(typeof(JointHighlightHolder)
                 ,GUIUtility.GetControlID(FocusType.Passive));
 

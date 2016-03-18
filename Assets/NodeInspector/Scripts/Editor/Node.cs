@@ -59,9 +59,7 @@ namespace NodeInspector.Editor {
         }
 
 
-        public Rect OnGUI(){
-            
-           
+        public void OnGUI(){            
             string windowName = scriptableObject.GetType().Name;
             if (!string.IsNullOrEmpty(scriptableObject.name)){
                 windowName+=" | "+scriptableObject.name;
@@ -76,7 +74,6 @@ namespace NodeInspector.Editor {
             scriptableObject.EditorWindowRect = newRect;
 
             HandleContextClick();
-            return WindowRect;
         }
 
         void HandleContextClick(){
