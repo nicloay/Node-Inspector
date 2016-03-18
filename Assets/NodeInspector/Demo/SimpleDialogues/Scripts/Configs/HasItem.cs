@@ -20,9 +20,13 @@ namespace NodeInspector.Demo.Dialogue{
                 Debug.LogErrorFormat("can't find inventory on {0} gameObject ", actualOwner.name, actualOwner);
             } else {
                 if (inventory.HasItem(Item)){
-                    Yes.Execute(actor, opponent);
+                    if (Yes != null){                        
+                        Yes.Execute(actor, opponent);
+                    }
                 } else {
-                    No.Execute(actor, opponent);
+                    if (No != null){                        
+                        No.Execute(actor, opponent);
+                    }
                 }
             }
         }
