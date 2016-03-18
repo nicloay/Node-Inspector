@@ -92,23 +92,8 @@ namespace NodeInspector.Editor {
                         ParentWindow.CurrentGraph.StartNode.serializedObject.ApplyModifiedProperties();
                     }, scriptableObject);                    
                 }
-                menu.AddItem (new GUIContent("Delete"), false, (obj)=>{
-                    
-                    for (int index = 0; index < ParentWindow.CurrentGraph.ItemList.Count; index++) {
-                        if (ParentWindow.CurrentGraph.ItemList[index] == scriptableObject){                            
-                            ParentWindow.CurrentGraph.SerializedItemList.GetArrayElementAtIndex(index).objectReferenceValue = null;
-                            ParentWindow.CurrentGraph.SerializedItemList.DeleteArrayElementAtIndex(index);
-                            ParentWindow.CurrentGraph.SerializedItemList.serializedObject.ApplyModifiedProperties();
-                            break;
-                        }
-                    }
-
-                    if (ParentWindow.CurrentGraph.StartNode != null 
-                        && ParentWindow.CurrentGraph.StartNode.objectReferenceValue == scriptableObject){
-                        ParentWindow.CurrentGraph.StartNode.objectReferenceValue = null;
-                        ParentWindow.CurrentGraph.StartNode.serializedObject.ApplyModifiedProperties();
-                    }
-
+                menu.AddItem (new GUIContent("Delete"), false, (obj)=>{                    
+                    ParentWindow.CurrentGraph.RemoveElementFromList((ScriptableObject)obj);
                 }, scriptableObject);
 
                 menu.ShowAsContext();

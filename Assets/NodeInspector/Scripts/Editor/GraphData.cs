@@ -83,5 +83,22 @@ namespace NodeInspector.Editor{
             }
         }
 
+        public void RemoveElementFromList(ScriptableObject listItem){
+            for (int index = 0; index < ItemList.Count; index++) {
+                if (ItemList[index] == listItem){                            
+                    SerializedItemList.GetArrayElementAtIndex(index).objectReferenceValue = null;
+                    SerializedItemList.DeleteArrayElementAtIndex(index);
+                    SerializedItemList.serializedObject.ApplyModifiedProperties();
+                    break;
+                }
+            }
+
+            if (StartNode != null 
+                && StartNode.objectReferenceValue == listItem){
+                StartNode.objectReferenceValue = null;
+                StartNode.serializedObject.ApplyModifiedProperties();
+            }
+        }
+
     }
 }
