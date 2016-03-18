@@ -99,10 +99,11 @@ namespace NodeInspector.Editor {
 
         }
 
-
+        HashSet<Joint> currentJoints =new HashSet<Joint>();
         void DoWindow(int id)
         {   
             EditorGUI.BeginChangeCheck();
+            currentJoints.Clear();
             serializedObject.Update();
             AddJointIfAcceptOneWay ();
             SerializedProperty iterator = serializedObject.GetIterator();
@@ -121,6 +122,8 @@ namespace NodeInspector.Editor {
                 }                    
             }
 
+            RemoveUnusedJoints(Joints);
+
             foreach(Joint joint in Joints){
                 joint.OnGUI();
             }
@@ -138,6 +141,18 @@ namespace NodeInspector.Editor {
             GUI.DragWindow(new Rect(KnobSize, KnobSize, scriptableObject.EditorWindowRect.width - KnobSize*2, GUI.skin.window.border.top));
         }
 
+        void RemoveUnusedJoints(List<Joint> joints)
+        {
+            List<Joint> jointsToRemove = new List<Joint>();
+            foreach(var joint in joints){
+                if (!currentJoints.Contains(joint)){
+                    jointsToRemove.Add(joint);
+                }
+            }
+            foreach (var joint in jointsToRemove){
+                joints.Remove(joint);
+            }
+        }
 
 
         JointType GetPropertyJointType(SerializedProperty property){
@@ -165,6 +180,7 @@ namespace NodeInspector.Editor {
                 {
                     Joints.Add(jData);
                 }
+                currentJoints.Add(jData);
 			}
 		}
 
@@ -177,6 +193,7 @@ namespace NodeInspector.Editor {
             {
                 Joints.Add(jData);
             }
+            currentJoints.Add(jData);
         }
     }
 }
