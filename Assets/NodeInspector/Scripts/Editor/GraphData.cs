@@ -14,6 +14,7 @@ namespace NodeInspector.Editor{
         public String PropertyName;
         public IList  ItemList;
         public SerializedProperty StartNode;
+        public SerializedProperty SerializedItemList;
 
         private GraphData()
         {            
@@ -45,18 +46,19 @@ namespace NodeInspector.Editor{
                 GraphAttribute attribute =  attributes
                     .ToList().First((arg) => arg.GetType() == typeof(GraphAttribute)) as GraphAttribute;
                 if (attribute != null){
+                    SerializedObject serializedObject = new SerializedObject(parentObject);
                     graphData = new GraphData();
                     graphData.ItemBaseType = fieldValueType.GetGenericArguments()[0];
                     graphData.ItemList = fieldValue as IList;
                     graphData.PropertyName = attribute.StartNode;
                     graphData.ParentObject = parentObject;
-
+                    graphData.SerializedItemList = serializedObject.FindProperty(fieldInfo.Name);
                     if (string.IsNullOrEmpty(graphData.PropertyName)){
                         graphData.PropertyName = fieldInfo.Name;
                     }
                     graphData.StartNode = null;
                     if (!string.IsNullOrEmpty(attribute.StartNode)){
-                        graphData.StartNode = (new SerializedObject(parentObject)).FindProperty(attribute.StartNode);
+                        graphData.StartNode = serializedObject.FindProperty(attribute.StartNode);
                         if (graphData.StartNode == null){
                             Debug.LogError("Cant find property with name " + attribute.StartNode +" for this graph");
                         } else if (false){ //fixme through reflexion get field type

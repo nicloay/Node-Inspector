@@ -86,10 +86,24 @@ namespace NodeInspector.Editor {
             Event currentEvent = Event.current;
             if (currentEvent.type == EventType.ContextClick && scriptableObject.EditorWindowRect.Contains(currentEvent.mousePosition)){
                 GenericMenu menu = new GenericMenu() ;
-                menu.AddItem(new GUIContent( "Make Default"), false, (obj) => { 
-                    ParentWindow.CurrentGraph.StartNode.objectReferenceValue = (UnityEngine.Object) obj;
-                    ParentWindow.CurrentGraph.StartNode.serializedObject.ApplyModifiedProperties();
+                if (ParentWindow.CurrentGraph.StartNode != null){                    
+                    menu.AddItem(new GUIContent( "Make Default"), false, (obj) => { 
+                        ParentWindow.CurrentGraph.StartNode.objectReferenceValue = (UnityEngine.Object) obj;
+                        ParentWindow.CurrentGraph.StartNode.serializedObject.ApplyModifiedProperties();
+                    }, scriptableObject);                    
+                }
+                menu.AddItem (new GUIContent("Delete"), false, (obj)=>{
+                    
+                    for (int index = 0; index < ParentWindow.CurrentGraph.ItemList.Count; index++) {
+                        if (ParentWindow.CurrentGraph.ItemList[index] == scriptableObject){                            
+                            ParentWindow.CurrentGraph.SerializedItemList.DeleteArrayElementAtIndex(index);
+                            ParentWindow.CurrentGraph.SerializedItemList.DeleteArrayElementAtIndex(index);
+                            ParentWindow.CurrentGraph.SerializedItemList.serializedObject.ApplyModifiedProperties();
+                            break;
+                        }
+                    }
                 }, scriptableObject);
+
                 menu.ShowAsContext();
                 currentEvent.Use();
             }
