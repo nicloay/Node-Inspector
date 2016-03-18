@@ -16,7 +16,12 @@ namespace NodeInspector.Demo.Dialogue{
 
         public override void Execute(GameObject actor, GameObject opponent)
         {
-            throw new System.NotImplementedException();
+            string actorName = Owner == Owner.Actor ? actor.name : opponent.name;
+            UIController.Instance.ShowText(actorName, Text, ()=> {
+                if (NextStep != null){                    
+                    NextStep.Execute(actor, opponent);
+                }
+            });
         }
     }
 

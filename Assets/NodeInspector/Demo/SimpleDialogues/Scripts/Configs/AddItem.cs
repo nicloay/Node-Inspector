@@ -18,7 +18,9 @@ namespace NodeInspector.Demo.Dialogue{
             } else {
                 inventory.AddItem(ItemType, ItemNumber);
             }
-            NextStep.Execute(actor, opponent);
+            if (NextStep != null){                
+                NextStep.Execute(actor, opponent);
+            }
         }
     }
 }

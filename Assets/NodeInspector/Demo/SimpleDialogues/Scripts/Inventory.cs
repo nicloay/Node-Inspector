@@ -29,6 +29,7 @@ namespace NodeInspector.Demo.Dialogue{
                     Item = itemType,
                     Count = count
                 };
+                Slots.Add(slot);
             } else {
                 slot.Count+= count;
             }
@@ -52,8 +53,8 @@ namespace NodeInspector.Demo.Dialogue{
         }
 
         // On later game we can return collection because one item could be stored at several slots
-        Slot GetSlotForType(ItemType item){
-            return Slots.First((arg) => arg.Item == item);
+        Slot GetSlotForType(ItemType item){            
+            return Slots.SingleOrDefault((arg) => arg.Item == item);
         }
     }    
 }

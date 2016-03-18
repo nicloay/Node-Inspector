@@ -13,8 +13,17 @@ namespace NodeInspector.Demo.Dialogue{
 
         public override void Execute(GameObject actor, GameObject opponent)
         {
-            throw new System.NotImplementedException();
-        }            
+            UIController.Instance.ShowTwoButtons(
+                Caption1, ()=>ExecuteNodeIfNotNull(NextStepOn1, actor, opponent),
+                Caption2, ()=>ExecuteNodeIfNotNull(NextStepOn2, actor, opponent)
+            );
+        }       
+
+        void ExecuteNodeIfNotNull(DialogueNode node, GameObject actor, GameObject opponent){
+            if (node!=null){
+                node.Execute(actor, opponent);
+            }
+        }
     }
 
 }

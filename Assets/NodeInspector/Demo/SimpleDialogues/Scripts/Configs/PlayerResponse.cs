@@ -9,7 +9,11 @@ namespace NodeInspector.Demo.Dialogue{
 
         public override void Execute(GameObject actor, GameObject opponent)
         {
-            throw new System.NotImplementedException();
+            UIController.Instance.ShowSingleButton(Caption, ()=>{
+                if (NextStep != null){
+                    NextStep.Execute(actor, opponent);
+                }
+            });
         }            
     }          
 }
