@@ -96,12 +96,19 @@ namespace NodeInspector.Editor {
                     
                     for (int index = 0; index < ParentWindow.CurrentGraph.ItemList.Count; index++) {
                         if (ParentWindow.CurrentGraph.ItemList[index] == scriptableObject){                            
-                            ParentWindow.CurrentGraph.SerializedItemList.DeleteArrayElementAtIndex(index);
+                            ParentWindow.CurrentGraph.SerializedItemList.GetArrayElementAtIndex(index).objectReferenceValue = null;
                             ParentWindow.CurrentGraph.SerializedItemList.DeleteArrayElementAtIndex(index);
                             ParentWindow.CurrentGraph.SerializedItemList.serializedObject.ApplyModifiedProperties();
                             break;
                         }
                     }
+
+                    if (ParentWindow.CurrentGraph.StartNode != null 
+                        && ParentWindow.CurrentGraph.StartNode.objectReferenceValue == scriptableObject){
+                        ParentWindow.CurrentGraph.StartNode.objectReferenceValue = null;
+                        ParentWindow.CurrentGraph.StartNode.serializedObject.ApplyModifiedProperties();
+                    }
+
                 }, scriptableObject);
 
                 menu.ShowAsContext();
