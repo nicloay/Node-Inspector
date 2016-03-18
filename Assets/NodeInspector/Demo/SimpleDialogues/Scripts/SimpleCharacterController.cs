@@ -11,7 +11,7 @@ namespace NodeInspector.Demo.Dialogue{
         }
         
         void FixedUpdate(){        
-            GetComponent<Rigidbody>().AddForce(new Vector3(xInput*Force, 0 ,0), ForceMode.VelocityChange);        
+            GetComponent<Rigidbody>().MovePosition (transform.position + new Vector3(xInput*Force, 0 ,0));        
         }
     }
 }
