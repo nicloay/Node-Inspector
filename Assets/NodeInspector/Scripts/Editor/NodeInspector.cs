@@ -22,17 +22,18 @@ namespace NodeInspector.Editor{
         float contentHeight = 0.0f;
 
         Vector2 scrollPosition;
-        void OnGUI(){            
-            JointHighlight = (JointHighlightHolder) GUIUtility.GetStateObject(typeof(JointHighlightHolder)
-                ,GUIUtility.GetControlID(FocusType.Passive));
-            
+        void OnGUI(){                                  
             if (!CheckSelectedObject()){
                 return;
             }
 
             if (Event.current.type == EventType.ValidateCommand && Event.current.commandName == "UndoRedoPerformed"){
                 Event.current.Use();
+                return;
             }
+
+            JointHighlight = (JointHighlightHolder) GUIUtility.GetStateObject(typeof(JointHighlightHolder)
+                ,GUIUtility.GetControlID(FocusType.Passive));
 
             List<Node> nodes  = new List<Node>();
             OnGUIToolBar();
