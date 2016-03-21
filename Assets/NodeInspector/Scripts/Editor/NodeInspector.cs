@@ -215,7 +215,10 @@ namespace NodeInspector.Editor{
        
         [MenuItem("Window/NodeInspector")]
         static void Init(){            
-            EditorWindow.GetWindow<NodeInspector>(typeof(SceneView));
+            NodeInspector window = EditorWindow.GetWindow<NodeInspector>(typeof(SceneView));
+
+
+            window.connectionCollection = null;
         }
     }    
 }

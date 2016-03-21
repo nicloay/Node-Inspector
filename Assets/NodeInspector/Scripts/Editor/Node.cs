@@ -82,21 +82,8 @@ namespace NodeInspector.Editor {
             }
             Event currentEvent = Event.current;
             if (currentEvent.type == EventType.ContextClick && scriptableObject.EditorWindowRect.Contains(currentEvent.mousePosition)){
-                GenericMenu menu = new GenericMenu() ;
-                if (ParentWindow.CurrentGraph.StartNode != null){                    
-                    menu.AddItem(new GUIContent( "Make Default"), false, (obj) => { 
-                        ParentWindow.CurrentGraph.StartNode.objectReferenceValue = (UnityEngine.Object) obj;
-                        ParentWindow.CurrentGraph.StartNode.serializedObject.ApplyModifiedProperties();
-                    }, scriptableObject);                    
-                }
-                menu.AddItem (new GUIContent("Delete"), false, (obj)=>{                    
-                    ParentWindow.CurrentGraph.RemoveElementFromList((ScriptableObject)obj);
-                }, scriptableObject);
-
-                menu.ShowAsContext();
-                currentEvent.Use();
+                ShowNodeContext();
             }
-
         }
 
         HashSet<Joint> currentJoints =new HashSet<Joint>();
@@ -134,11 +121,22 @@ namespace NodeInspector.Editor {
                 style.alignment = TextAnchor.MiddleRight;
                 GUI.Label(selectBox, " Start Node", style);
             }
-            
+
+            ShowWindowMenu();
             serializedObject.ApplyModifiedProperties();
             EditorGUI.EndChangeCheck();
 
             GUI.DragWindow(new Rect(KnobSize, KnobSize, scriptableObject.EditorWindowRect.width - KnobSize*2, GUI.skin.window.border.top));
+        }
+
+
+        void ShowWindowMenu(){
+            GUIStyle style = GUI.skin.GetStyle("PaneOptions");
+            Rect rect = new Rect(WindowRect.width - KnobSize - 20, 20, 20,20);
+
+            if (GUI.Button(rect , "", style)){
+                ShowNodeContext();
+            }
         }
 
         void RemoveUnusedJoints(List<Joint> joints)
@@ -194,6 +192,26 @@ namespace NodeInspector.Editor {
                 Joints.Add(jData);
             }
             currentJoints.Add(jData);
+        }
+
+        void ShowNodeContext()
+        {
+            Event currentEvent = Event.current;
+            GenericMenu menu = new GenericMenu();
+            if (ParentWindow.CurrentGraph.StartNode != null)
+            {
+                menu.AddItem(new GUIContent("Make Default"), false, obj => 
+                {
+                    ParentWindow.CurrentGraph.StartNode.objectReferenceValue = (UnityEngine.Object)obj;
+                    ParentWindow.CurrentGraph.StartNode.serializedObject.ApplyModifiedProperties();
+                }, scriptableObject);
+            }
+            menu.AddItem(new GUIContent("Delete"), false, obj => 
+            {
+                ParentWindow.CurrentGraph.RemoveElementFromList((ScriptableObject)obj);
+            }, scriptableObject);
+            menu.ShowAsContext();
+            currentEvent.Use();
         }
     }
 }
