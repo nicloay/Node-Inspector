@@ -25,6 +25,7 @@ namespace NodeInspector.Editor{
         Vector2 scrollPosition;
         void OnGUI(){                                  
             if (!CheckSelectedObject()){
+                EditorGUILayout.HelpBox("Please select scriptable object instance which has a [Graph] attribute", MessageType.Info,true);
                 return;
             }
 
@@ -214,7 +215,7 @@ namespace NodeInspector.Editor{
        
         [MenuItem("Window/NodeInspector")]
         static void Init(){            
-            EditorWindow.GetWindow(typeof(NodeInspector));
+            EditorWindow.GetWindow<NodeInspector>(typeof(SceneView));
         }
     }    
 }
