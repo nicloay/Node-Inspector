@@ -137,7 +137,12 @@ namespace NodeInspector.Editor{
                 return graphList.Values.ElementAt(currentGraphId);
             }
         }
-         
+
+        void OnSelectionChange()
+        {
+            Repaint();
+        }
+
         bool CheckSelectedObject(){
             if (Selection.activeObject == null || !(Selection.activeObject is ScriptableObject)){
                 return false;
