@@ -11,7 +11,7 @@ namespace NodeInspector.Editor{
 
     public class Connection{
         const float BezierMinDistanceForSelection = 3.0f;
-        const float BezierNormalLengthRatio = 0.25f;
+        const float BezierTangentLengthRatio = 0.25f;
 
         public int      ControlID   {get; private set;}
         public Joint    InputJoint  {get; set;}
@@ -34,11 +34,11 @@ namespace NodeInspector.Editor{
 
             if (Event.current.type == EventType.mouseDown && ConnectionType == ConnectionRenderType.OutputToInput){  
                 Focused = false;             
-                Vector2 startNormal,endNormal;
+                Vector2 startTangent,endTangent;
                 GetBezierTangent(OutputJoint.BezierSidePoint,OutputJoint.BezierTangent
-                    , InputJoint.BezierSidePoint, InputJoint.BezierTangent, out startNormal, out endNormal);
+                    , InputJoint.BezierSidePoint, InputJoint.BezierTangent, out startTangent, out endTangent);
                 if (HandleUtility.DistancePointBezier(Event.current.mousePosition, OutputJoint.BezierSidePoint, InputJoint.BezierSidePoint,
-                    startNormal, endNormal) <= BezierMinDistanceForSelection){                   
+                    startTangent, endTangent) <= BezierMinDistanceForSelection){                   
                     GUIUtility.hotControl = ControlID;
                     Focused = true;
                     Event.current.Use();
@@ -105,7 +105,7 @@ namespace NodeInspector.Editor{
 
         void GetBezierTangent(Vector2 startPoint, Vector2 startTangent, Vector2 endPoint, 
             Vector2 endTangent, out Vector2 startTangentLocation, out Vector2 endTangentLocation){
-            float tangentMagnitude =  (endPoint - startPoint).magnitude * BezierNormalLengthRatio;
+            float tangentMagnitude =  (endPoint - startPoint).magnitude * BezierTangentLengthRatio;
             startTangentLocation = startPoint+ startTangent * tangentMagnitude;
             endTangentLocation = endPoint + endTangent * tangentMagnitude;                
         }

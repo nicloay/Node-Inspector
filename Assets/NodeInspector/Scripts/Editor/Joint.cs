@@ -4,8 +4,6 @@ using UnityEditor;
 namespace NodeInspector.Editor{
     public class Joint : System.IEquatable<Joint> {
 
-
-        const float BezierNormalMagnitude = 30.0f;
         public Rect               FieldInternalRect     {get; private set;}
 		public JointType 	      JointType			    {get; private set;}
         public SerializedProperty SerializedProperty    {get; private set;} //we have this property if it's link to property
