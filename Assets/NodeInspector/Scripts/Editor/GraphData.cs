@@ -30,12 +30,8 @@ namespace NodeInspector.Editor{
         }
 
         public static bool CanCreateGraphData(ScriptableObject parentObject, FieldInfo fieldInfo, out GraphData graphData){
-            graphData = null;
-            object fieldValue = fieldInfo.GetValue(parentObject);
-            if (fieldValue == null){
-                return false;
-            }
-            Type fieldValueType = fieldValue.GetType();
+            graphData = null;          
+            Type fieldValueType = fieldInfo.FieldType;
             if (fieldValueType.IsGenericType && (fieldValueType.GetGenericTypeDefinition() == typeof(List<>))
                 && typeof(ScriptableObject).IsAssignableFrom( fieldValueType.GetGenericArguments()[0])){
 
@@ -46,6 +42,12 @@ namespace NodeInspector.Editor{
                 GraphAttribute attribute =  attributes
                     .ToList().First((arg) => arg.GetType() == typeof(GraphAttribute)) as GraphAttribute;
                 if (attribute != null){
+                    object fieldValue = fieldInfo.GetValue(parentObject);
+                    if (fieldValue == null){                        
+                        var newList = Activator.CreateInstance(fieldValueType);
+                        fieldInfo.SetValue(parentObject, newList);
+                        fieldValue = newList;
+                    }
                     SerializedObject serializedObject = new SerializedObject(parentObject);
                     graphData = new GraphData();
                     graphData.ItemBaseType = fieldValueType.GetGenericArguments()[0];
