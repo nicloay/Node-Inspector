@@ -11,6 +11,7 @@ namespace NodeInspector.Editor{
 
     public class Connection{
         const float BezierMinDistanceForSelection = 3.0f;
+        const float BezierNormalLengthRatio = 0.25f;
 
         public int      ControlID   {get; private set;}
         public Joint    InputJoint  {get; set;}
@@ -27,12 +28,17 @@ namespace NodeInspector.Editor{
             return result;
         }
 
+
+
         public void OnGUI(){
 
             if (Event.current.type == EventType.mouseDown && ConnectionType == ConnectionRenderType.OutputToInput){  
                 Focused = false;             
+                Vector2 startNormal,endNormal;
+                GetBezierTangent(OutputJoint.BezierSidePoint,OutputJoint.BezierTangent
+                    , InputJoint.BezierSidePoint, InputJoint.BezierTangent, out startNormal, out endNormal);
                 if (HandleUtility.DistancePointBezier(Event.current.mousePosition, OutputJoint.BezierSidePoint, InputJoint.BezierSidePoint,
-                    OutputJoint.BezierNormal, InputJoint.BezierNormal) <= BezierMinDistanceForSelection){                   
+                    startNormal, endNormal) <= BezierMinDistanceForSelection){                   
                     GUIUtility.hotControl = ControlID;
                     Focused = true;
                     Event.current.Use();
@@ -52,24 +58,22 @@ namespace NodeInspector.Editor{
                         switch (ConnectionType){
                             case ConnectionRenderType.OutputToInput:
                                 {
-                                    Handles.DrawBezier (OutputJoint.BezierSidePoint, InputJoint.BezierSidePoint,
-                                        OutputJoint.BezierNormal, InputJoint.BezierNormal, color, null, width);                                     
+                                    DrawBezier(OutputJoint.BezierSidePoint, OutputJoint.BezierTangent, InputJoint.BezierSidePoint, InputJoint.BezierTangent, color, width);                                    
                                     break;
                                 }
                             case ConnectionRenderType.MouseToInputNode:
                                 {
                                     Vector2 srcPosition = Event.current.mousePosition;
-                                    Vector2 srcNormal = srcPosition + (InputJoint.BezierSidePoint - srcPosition).normalized * 50.0f;
-                                    Handles.DrawBezier (srcPosition, InputJoint.BezierSidePoint,
-                                        srcNormal, InputJoint.BezierNormal, color, null, width);                                                                                    
+
+                                    DrawBezier(srcPosition, InputJoint.BezierBackTangent
+                                        , InputJoint.BezierSidePoint, InputJoint.BezierTangent, color, width );                                    
                                     break;
                                 }
                             case ConnectionRenderType.OutputNodeToMouse:
                                 {
                                     Vector2 dstPosition = Event.current.mousePosition;
-                                    Vector2 dstNormal = dstPosition + (OutputJoint.BezierSidePoint - dstPosition).normalized * 50.0f;
-                                    Handles.DrawBezier (OutputJoint.BezierSidePoint, dstPosition,
-                                        OutputJoint.BezierNormal, dstNormal, color, null, width);                                                
+                                    DrawBezier(OutputJoint.BezierSidePoint, OutputJoint.BezierTangent
+                                        , dstPosition, OutputJoint.BezierBackTangent, color, width);
                                     break;
                                 }
                         }
@@ -91,5 +95,19 @@ namespace NodeInspector.Editor{
                     }
             }
         }
-	}
+	
+        void DrawBezier(Vector2 startPoint, Vector2 startTangent, Vector2 endPoint, Vector2 endTangent, Color color, float width){
+            Vector2 startTangentLocation, endTangentLocation;
+            GetBezierTangent(startPoint, startTangent, endPoint, endTangent, out startTangentLocation, out endTangentLocation);
+            Handles.DrawBezier(startPoint, endPoint, startTangentLocation, endTangentLocation
+                , color, null, width);
+        }
+
+        void GetBezierTangent(Vector2 startPoint, Vector2 startTangent, Vector2 endPoint, 
+            Vector2 endTangent, out Vector2 startTangentLocation, out Vector2 endTangentLocation){
+            float tangentMagnitude =  (endPoint - startPoint).magnitude * BezierNormalLengthRatio;
+            startTangentLocation = startPoint+ startTangent * tangentMagnitude;
+            endTangentLocation = endPoint + endTangent * tangentMagnitude;                
+        }
+    }
 }

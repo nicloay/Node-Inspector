@@ -13,7 +13,8 @@ namespace NodeInspector.Editor{
 
 
         public GUIStyle KnobButtonStyle             {get; private set;}
-        public Vector2  BezierNormal                {get; private set;}
+        public Vector2  BezierTangent               {get; private set;}
+        public Vector2  BezierBackTangent           {get; private set;}
         public Vector2  BezierSidePoint             {get; private set;}
         public string   KnobButtonCaption           {get; private set;}
         //relative rect
@@ -99,7 +100,8 @@ namespace NodeInspector.Editor{
                 case JointType.OneWay_IN:
                     KnobButtonInternalRect = new Rect(Node.KnobSize * 2,  0, Node.KnobSize, Node.KnobSize);
                     BezierSidePoint = parentWindowGlobalPosition + new Vector2(Node.KnobSize*2.5f, 0.0f);
-                    BezierNormal = BezierSidePoint + Vector2.down * BezierNormalMagnitude;
+                    BezierTangent = Vector2.down;
+                    BezierBackTangent = Vector2.right;
                     break;
                 case JointType.ManyToMany_IN:
                 case JointType.ManyToOne_IN:
@@ -107,12 +109,14 @@ namespace NodeInspector.Editor{
                 case JointType.OneToOne_IN:
                     KnobButtonInternalRect = new Rect(0, FieldInternalRect.y, Node.KnobSize, Node.KnobSize);
                     BezierSidePoint = parentWindowGlobalPosition + KnobButtonInternalRect.position + new Vector2(0.0f, Node.KnobSize*0.5f);
-                    BezierNormal = BezierSidePoint + Vector2.left * BezierNormalMagnitude;
+                    BezierTangent = Vector2.left;
+                    BezierBackTangent = Vector2.right;
                     break;
                 default:
                     KnobButtonInternalRect = new Rect( FieldInternalRect.x + FieldInternalRect.width + Node.OriginalRightPatdding, FieldInternalRect.y, Node.KnobSize, Node.KnobSize);
                     BezierSidePoint = parentWindowGlobalPosition + KnobButtonInternalRect.position+ new Vector2(Node.KnobSize, Node.KnobSize*0.5f);
-                    BezierNormal = BezierSidePoint + Vector2.right * BezierNormalMagnitude;
+                    BezierTangent = Vector2.right;
+                    BezierBackTangent = Vector2.down;
                     break;
             }
 
