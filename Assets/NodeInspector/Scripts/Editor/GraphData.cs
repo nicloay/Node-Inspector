@@ -98,6 +98,9 @@ namespace NodeInspector.Editor{
                 StartNode.objectReferenceValue = null;
                 StartNode.serializedObject.ApplyModifiedProperties();
             }
+
+            //FIXME: unfortunatly we can't remove this subasset from main asset because we will lost
+            //        this object and won't be able to Undo this action. Try to fix that later and clean junk on some events like window close.
         }
 
     }
