@@ -21,6 +21,7 @@ namespace NodeInspector.Editor{
         float contentWidth = 0.0f;
         float contentHeight = 0.0f;
 
+        ConnectionsCollection connectionCollection;
         Vector2 scrollPosition;
         void OnGUI(){                                  
             if (!CheckSelectedObject()){
@@ -41,8 +42,16 @@ namespace NodeInspector.Editor{
 
             List<Node> nodes  = new List<Node>();
             OnGUIToolBar();
+           
             scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
             GUILayoutUtility.GetRect(GUIContent.none, GUIStyle.none, GUILayout.Width(contentWidth), GUILayout.Height(contentHeight));
+
+            if (connectionCollection != null){
+                foreach (Connection connectionGUI in connectionCollection.allConnections) {
+                    connectionGUI.OnGUI();
+                }
+            }
+
             foreach(var graphData in CurrentGraph.ItemList){
                 Node nodeGUI = Node.GetInstance((ScriptableObjectNode)graphData, this);               
                 nodes.Add(nodeGUI);               
@@ -54,13 +63,9 @@ namespace NodeInspector.Editor{
             }
             EndWindows();
 
-            ConnectionsCollection cCollection = new ConnectionsCollection (nodes, this);
+            connectionCollection = new ConnectionsCollection (nodes, this);
 
-            foreach (Connection connectionGUI in cCollection.allConnections) {
-                connectionGUI.OnGUI();
-			}
-
-            HandleDraggConnections(nodes, cCollection.LastDraggedConnection);
+            HandleDraggConnections(nodes, connectionCollection.LastDraggedConnection);
             EditorGUILayout.EndScrollView();
             UpdateContentSize(nodes);
         }
