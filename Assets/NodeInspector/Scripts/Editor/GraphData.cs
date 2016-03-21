@@ -50,7 +50,7 @@ namespace NodeInspector.Editor{
                     graphData = new GraphData();
                     graphData.ItemBaseType = fieldValueType.GetGenericArguments()[0];
                     graphData.ItemList = fieldValue as IList;
-                    graphData.PropertyName = attribute.StartNode;
+                    graphData.PropertyName = fieldInfo.Name;
                     graphData.ParentObject = parentObject;
                     graphData.SerializedItemList = serializedObject.FindProperty(fieldInfo.Name);
                     if (string.IsNullOrEmpty(graphData.PropertyName)){
