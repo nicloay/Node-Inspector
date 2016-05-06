@@ -96,9 +96,9 @@ namespace NodeInspector.Editor{
         {
             switch(JointType){
                 case JointType.OneWay_IN:
-                    KnobButtonInternalRect = new Rect(Node.KnobSize * 2,  0, Node.KnobSize, Node.KnobSize);
-                    BezierSidePoint = parentWindowGlobalPosition + new Vector2(Node.KnobSize*2.5f, 0.0f);
-                    BezierTangent = Vector2.down;
+                    KnobButtonInternalRect = new Rect(0,  0, Node.KnobSize, Node.KnobSize);
+                    BezierSidePoint = parentWindowGlobalPosition + new Vector2(0.0f, Node.KnobSize* 0.5f);
+                    BezierTangent = Vector2.left;
                     BezierBackTangent = Vector2.right;
                     break;
                 case JointType.ManyToMany_IN:
@@ -120,10 +120,10 @@ namespace NodeInspector.Editor{
 
             switch(JointType){
                 case JointType.OneWay_IN:
-                    KnobButtonCaption = "o";
+                    KnobButtonCaption = ">";
                     break;
                 case JointType.OneWay_OUT:
-                    KnobButtonCaption = "o";
+                    KnobButtonCaption = ">";
                     break;
                 case JointType.ManyToMany_IN:
                 case JointType.ManyToOne_IN:
@@ -137,9 +137,7 @@ namespace NodeInspector.Editor{
             }
 
             switch(JointType){
-                case JointType.OneWay_IN:
-                    KnobButtonStyle = EditorStyles.miniButton;
-                    break;
+                case JointType.OneWay_IN:                    
                 case JointType.ManyToMany_IN:
                 case JointType.ManyToOne_IN:
                 case JointType.OneToMany_IN:
