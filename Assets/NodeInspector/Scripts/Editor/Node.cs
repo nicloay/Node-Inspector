@@ -34,11 +34,9 @@ namespace NodeInspector.Editor {
                     _windowStyle = new GUIStyle(GUI.skin.window);
                     _windowStyle.overflow.left  -= KnobSize;
                     _windowStyle.overflow.right -= KnobSize;
-//                    _windowStyle.overflow.top   -= KnobSize;
                     OriginalRightPatdding = _windowStyle.padding.right;
                     _windowStyle.padding.left  += KnobSize;
                     _windowStyle.padding.right += KnobSize;
-//                    _windowStyle.padding.top   += KnobSize;
                 }
                 return _windowStyle;
             }

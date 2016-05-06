@@ -5,10 +5,11 @@ using System.Collections.Generic;
 
 namespace NodeInspector.Demo.OneToMany{    
     [Serializable]
-    public class Part{
+    public class Part {
         [OneToMany(DirectionType.Input, "entity")]
         public SimpleEntity Source ;
         public int Quantity;
+        [HideInInspector]
         public ComplexEntity Parent;
     }
 
@@ -18,11 +19,13 @@ namespace NodeInspector.Demo.OneToMany{
         #region ISerializationCallbackReceiver implementation
         public void OnBeforeSerialize()
         {
-            Parts.ForEach((obj) => {
-                if (obj != null) { 
-                    obj.Parent = this;
-                }   
-            });
+            if (Parts != null) {                
+                Parts.ForEach((obj) => {
+                    if (obj != null) { 
+                        obj.Parent = this;
+                    }   
+                });
+            }
         }
 
         public void OnAfterDeserialize()
