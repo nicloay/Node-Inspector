@@ -38,6 +38,7 @@ namespace NodeInspector.Editor{
                 return;
             }
 
+            bool firsDrawCallOnThisGraph = CurrentGraph != lastUsedGraph;
             JointHighlight = (JointHighlightHolder) GUIUtility.GetStateObject(typeof(JointHighlightHolder)
                 ,GUIUtility.GetControlID(FocusType.Passive));
 
@@ -69,6 +70,10 @@ namespace NodeInspector.Editor{
             HandleDraggConnections(nodes, connectionCollection.LastDraggedConnection);
             EditorGUILayout.EndScrollView();
             UpdateContentSize(nodes);
+            if (firsDrawCallOnThisGraph ){
+                Repaint();
+            }
+            lastUsedGraph = CurrentGraph;
         }
 
 
@@ -129,7 +134,7 @@ namespace NodeInspector.Editor{
             }
         }
 
-
+        GraphData lastUsedGraph;
         Dictionary<string, GraphData> graphList;
         int currentGraphId;
         public GraphData CurrentGraph{
