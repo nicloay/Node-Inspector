@@ -4,23 +4,15 @@ using System.Collections.Generic;
 
 
 namespace NodeInspector.Demo.OneToMany{    
-    [Serializable]
-    public class Part {
-        [OneToMany(DirectionType.Input, "entity")]
-        public SimpleEntity Source ;
-        public int Quantity;
-        [HideInInspector]
-        public ComplexEntity Parent;
-    }
-
-    public class ComplexEntity : SimpleEntity, ISerializationCallbackReceiver {
-        public List<Part> Parts;
+    
+    public class ComplexItem : SimpleItem, ISerializationCallbackReceiver {
+        public List<ItemPack> Items;
 
         #region ISerializationCallbackReceiver implementation
         public void OnBeforeSerialize()
         {
-            if (Parts != null) {                
-                Parts.ForEach((obj) => {
+            if (Items != null) {                
+                Items.ForEach((obj) => {
                     if (obj != null) { 
                         obj.Parent = this;
                     }   

@@ -4,10 +4,9 @@ using UnityEngine;
 
 
 namespace NodeInspector.Demo.OneToMany{    
-    public class SimpleEntity : ScriptableObjectNode {
+    public class SimpleItem : ScriptableObjectNode {
         public string Name;
         [OneToMany(DirectionType.Output, "entity")]
-        [SerializeField]
-        public List<Part> UsedIn;
+        public List<ComplexItem> UsedIn;
     }
 }

@@ -10,7 +10,7 @@ namespace NodeInspector.Editor{
     
     public class GraphData {
         public ScriptableObject ParentObject;
-        public Type ItemBaseType{get; private set;}
+        public Type ItemBaseType {get; private set;}
         public String PropertyName;
         public IList  ItemList;
         public SerializedProperty StartNode;
