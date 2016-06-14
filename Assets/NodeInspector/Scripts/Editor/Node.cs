@@ -34,11 +34,11 @@ namespace NodeInspector.Editor {
                     _windowStyle = new GUIStyle(GUI.skin.window);
                     _windowStyle.overflow.left  -= KnobSize;
                     _windowStyle.overflow.right -= KnobSize;
-                    _windowStyle.overflow.top   -= KnobSize;
+//                    _windowStyle.overflow.top   -= KnobSize;
                     OriginalRightPatdding = _windowStyle.padding.right;
                     _windowStyle.padding.left  += KnobSize;
                     _windowStyle.padding.right += KnobSize;
-                    _windowStyle.padding.top   += KnobSize;
+//                    _windowStyle.padding.top   += KnobSize;
                 }
                 return _windowStyle;
             }
@@ -116,7 +116,7 @@ namespace NodeInspector.Editor {
             }
 
             if (ParentWindow.CurrentGraph.StartNode != null && ParentWindow.CurrentGraph.StartNode.objectReferenceValue == scriptableObject){
-                Rect selectBox = new Rect(0,0, WindowRect.width - KnobSize, KnobSize);
+                Rect selectBox = new Rect(0,WindowRect.height - KnobSize, WindowRect.width - KnobSize, KnobSize);
                 GUIStyle style = new GUIStyle(EditorStyles.miniLabel);
                 style.alignment = TextAnchor.MiddleRight;
                 GUI.Label(selectBox, " Start Node", style);
@@ -126,13 +126,13 @@ namespace NodeInspector.Editor {
             serializedObject.ApplyModifiedProperties();
             EditorGUI.EndChangeCheck();
 
-            GUI.DragWindow(new Rect(KnobSize, KnobSize, scriptableObject.EditorWindowRect.width - KnobSize*2, GUI.skin.window.border.top));
+            GUI.DragWindow(new Rect(KnobSize, 0, scriptableObject.EditorWindowRect.width - KnobSize*2, GUI.skin.window.border.top));
         }
 
 
         void ShowWindowMenu(){
             GUIStyle style = GUI.skin.GetStyle("PaneOptions");
-            Rect rect = new Rect(WindowRect.width - KnobSize - 20, 20, 20,20);
+            Rect rect = new Rect(WindowRect.width - KnobSize - 20, 5, 20,20);
 
             if (GUI.Button(rect , "", style)){
                 ShowNodeContext();
@@ -200,7 +200,7 @@ namespace NodeInspector.Editor {
             GenericMenu menu = new GenericMenu();
             if (ParentWindow.CurrentGraph.StartNode != null)
             {
-                menu.AddItem(new GUIContent("Make Default"), false, obj => 
+                menu.AddItem(new GUIContent("StartNode"), false, obj => 
                 {
                     ParentWindow.CurrentGraph.StartNode.objectReferenceValue = (UnityEngine.Object)obj;
                     ParentWindow.CurrentGraph.StartNode.serializedObject.ApplyModifiedProperties();
